@@ -10,8 +10,7 @@
 require 'scnr/ui/cli'
 
 include SCNR::Engine
-include Utilities
-include SCNR::UI::CLI::Output
+include UI::Output
 
 if ARGV.empty?
     puts <<EOHELP
@@ -19,9 +18,9 @@ if ARGV.empty?
 
 Usage: #{__FILE__} SCRIPT
 
-Pre-loads SCNR::Engine libraries and loads and runs a Ruby script.
+Pre-loads the SCNR::Engine libraries and loads and runs the given Ruby script.
 
-(Call the 'mute' method to mute system output.)
+(Run 'mute/unmute' to change system output.)
 EOHELP
     exit
 end

@@ -329,11 +329,11 @@ class Engine
 
     def capture_output_options
         @only_positives_opt = only_positives?
-        @@only_positives    = false
+        disable_only_positives
     end
 
     def restore_output_options
-        @@only_positives = @only_positives_opt
+        only_positives if @only_positives_opt
         unmute
     end
 

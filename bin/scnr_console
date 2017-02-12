@@ -16,7 +16,7 @@ include UI::Output
 
 puts BANNER
 puts
-puts "(Call the 'mute' method to mute engine output.)"
+puts "(Run 'mute/unmute' to change system output.)"
 
 IRB.setup nil
 IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context

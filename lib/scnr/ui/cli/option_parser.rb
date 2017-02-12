@@ -86,7 +86,7 @@ class OptionParser
     end
 
     def options
-        Engine::Options.instance
+        SCNR::Engine::Options.instance
     end
 
     private
