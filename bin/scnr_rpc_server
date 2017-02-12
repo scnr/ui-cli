@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+=begin
+    Copyright 2017 Sarosys LLC <http://www.sarosys.com>
+
+    This file is part of the SCNR::UI::CLI project and is subject to
+    redistribution and commercial restrictions. Please see the SCNR::UI::CLI
+    web site for more information on licensing and terms of use.
+=end
+
+require 'scnr/ui/cli'
+require 'scnr/ui/cli/rpc/server/dispatcher'
+
+SCNR::UI::CLI::RPC::Server::Dispatcher.new
