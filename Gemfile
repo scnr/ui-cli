@@ -7,7 +7,10 @@ group :spec do
     gem 'rspec', '~> 3.0'
 end
 
+group :prof do
+    gem 'scnr-monitor', path: '../monitor'
+end
+
 gem 'scnr-engine', path: '../engine'
 
-# Specify your gem's dependencies in ui-cli.gemspec
 gemspec
