@@ -8,9 +8,17 @@ group :spec do
 end
 
 group :prof do
-    gem 'scnr-monitor', path: '../monitor'
+
+    if File.exist? '../monitor'
+        gem 'scnr-monitor', path: '../monitor'
+    end
+
+    gem 'benchmark-ips'
+    gem 'memory_profiler'
 end
 
 gem 'scnr-engine', path: '../engine'
+gem 'ethon',       github: 'typhoeus/ethon'
+gem 'typhoeus',    github: 'typhoeus/typhoeus'
 
 gemspec
