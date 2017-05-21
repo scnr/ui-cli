@@ -39,6 +39,13 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         separator ''
+        separator 'Grid'
+
+        on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
+            options.dispatcher.url = url
+        end
+
+        separator ''
         separator 'Output'
 
         on( '--reroute-to-logfile',
@@ -93,18 +100,57 @@ class OptionParser < UI::CLI::OptionParser
                 options.rpc.ssl_ca = file
             end
 
-            on( '--ssl-private-key FILE',
+            on( '--server-ssl-private-key FILE',
                 'Location of the SSL private key (.pem).'
             ) do |file|
                 options.rpc.server_ssl_private_key = file
             end
 
-            on( '--ssl-certificate FILE',
+            on( '--server-ssl-certificate FILE',
                 'Location of the SSL certificate (.pem).'
             ) do |file|
                 options.rpc.server_ssl_certificate = file
             end
+
+            on( '--client-ssl-private-key FILE',
+                'Location of the client SSL private key (.pem).'
+            ) do |file|
+                options.rpc.client_ssl_private_key = file
+            end
+
+            on( '--client-ssl-certificate FILE',
+                'Location of the client SSL certificate (.pem).'
+            ) do |file|
+                options.rpc.client_ssl_certificate = file
+            end
         end
+
+        separator ''
+        separator 'System'
+
+        on( '--system-max-slots SLOTS', Integer,
+            'Maximum amount of Instances to be alive at any given time.',
+            '(Default: auto)'
+        ) do |max_slots|
+            options.system.max_slots = max_slots
+        end
+    end
+
+    def validate
+        if SCNR::Engine::Options.dispatcher.url
+            begin
+                SCNR::Engine::RPC::Client::Dispatcher.new(
+                    SCNR::Engine::Options.instance,
+                    SCNR::Engine::Options.dispatcher.url
+                ).alive?
+            rescue => e
+                print_error "Could not reach Dispatcher at: #{SCNR::Engine::Options.dispatcher.url}"
+                print_error "#{e.class}: #{e.to_s}"
+                exit 1
+            end
+        end
+
+        super
     end
 
 end
