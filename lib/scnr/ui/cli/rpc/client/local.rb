@@ -37,7 +37,7 @@ class Local
         parser.session
         parser.profiles
         parser.browser_cluster
-        parser.distribution
+        parser.grid
         parser.report
         parser.timeout
         parser.parse

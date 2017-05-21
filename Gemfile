@@ -18,7 +18,7 @@ group :prof do
 end
 
 gem 'scnr-engine', path: '../engine'
-gem 'ethon',       github: 'typhoeus/ethon'
+gem 'ethon',       github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 gem 'typhoeus',    github: 'typhoeus/typhoeus'
 
 gemspec

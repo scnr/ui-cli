@@ -18,15 +18,11 @@ class Remote
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::Engine::OptionParser
 
-    def distribution
-        separator 'Distribution'
+    def grid
+        separator 'Grid'
 
-        on( '--dispatcher-url HOST:PORT', 'Dispatcher server to use.' ) do |url|
+        on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
             options.dispatcher.url = url
-        end
-
-        on( '--grid', "Shorthand for '--grid-mode=balance'." ) do
-            options.dispatcher.grid = true
         end
     end
 
