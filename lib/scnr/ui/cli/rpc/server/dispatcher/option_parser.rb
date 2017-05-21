@@ -25,6 +25,10 @@ class OptionParser < UI::CLI::OptionParser
 
         separator 'Server'
 
+        on( '--name NAME', 'Name for this Dispatcher.' ) do |name|
+            options.dispatcher.name = name
+        end
+
         on( '--address ADDRESS', 'Hostname or IP address to bind to.',
                "(Default: #{options.rpc.server_address})"
         ) do |address|
@@ -48,13 +52,6 @@ class OptionParser < UI::CLI::OptionParser
                "(Default: #{options.dispatcher.instance_port_range.join( '-' )})"
         ) do |range|
             options.dispatcher.instance_port_range = range.split( '-' ).map(&:to_i)
-        end
-
-        on( '--pool-size SIZE', Integer,
-               'How many Instances to have available at any given time.',
-               "(Default: #{options.dispatcher.pool_size})"
-        ) do |pool_size|
-            options.dispatcher.pool_size = pool_size
         end
 
         separator ''
@@ -89,18 +86,6 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--neighbour URL', 'URL of a neighbouring Dispatcher.' ) do |url|
             options.dispatcher.neighbour = url
-        end
-
-        on( '--weight FLOAT', Float, 'Weight of this node.' ) do |url|
-            options.dispatcher.node_weight = url
-        end
-
-        on( '--pipe-id ID', 'Identifier for the attached bandwidth pipe.' ) do |id|
-            options.dispatcher.node_pipe_id = id
-        end
-
-        on( '--nickname NAME', 'Nickname for this Dispatcher.' ) do |name|
-            options.dispatcher.node_nickname = name
         end
 
         separator ''
@@ -142,6 +127,16 @@ class OptionParser < UI::CLI::OptionParser
         on( '--snapshot-save-path DIRECTORY', String,
             'Directory under which to store snapshots of suspended scans.' ) do |path|
             options.snapshot.save_path = path
+        end
+
+        separator ''
+        separator 'System'
+
+        on( '--system-max-slots SLOTS', Integer,
+            'Maximum amount of Instances to be alive at any given time.',
+            '(Default: auto)'
+        ) do |max_slots|
+            options.system.max_slots = max_slots
         end
     end
 
