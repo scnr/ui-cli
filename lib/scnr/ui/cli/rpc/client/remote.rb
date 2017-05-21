@@ -49,11 +49,17 @@ class Remote
         Arachni::Reactor.global.run_in_thread
 
         begin
-            dispatcher = Engine::RPC::Client::Dispatcher.new( options, options.dispatcher.url )
+            dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( options, options.dispatcher.url )
 
             # Get a new instance and assign the url we're going to audit as the 'owner'.
             instance_info = dispatcher.dispatch( options.url )
-        rescue Engine::RPC::Exceptions::ConnectionError => e
+
+            if !instance_info
+                print_info 'Dispatcher is at maximum utilization, please try again later.'
+                exit 2
+            end
+
+        rescue Arachni::RPC::Exceptions::ConnectionError => e
             print_error "Could not connect to Dispatcher at '#{options.dispatcher.url}'."
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
@@ -62,10 +68,10 @@ class Remote
 
         instance = nil
         begin
-            instance = Engine::RPC::Client::Instance.new( options,
+            instance = SCNR::Engine::RPC::Client::Instance.new( options,
                                                             instance_info['url'],
                                                             instance_info['token'] )
-        rescue Engine::RPC::Exceptions::ConnectionError => e
+        rescue Arachni::RPC::Exceptions::ConnectionError => e
             print_error 'Could not connect to Instance.'
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
@@ -73,7 +79,7 @@ class Remote
         end
 
         # Let the Instance UI manage the Instance from now on.
-        Instance.new( Engine::Options.instance, instance, parser.get_timeout ).run
+        Instance.new( SCNR::Engine::Options.instance, instance, parser.get_timeout ).run
     end
 
 end
