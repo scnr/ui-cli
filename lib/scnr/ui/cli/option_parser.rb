@@ -22,7 +22,7 @@ class OptionParser
         separator 'Generic'
 
         # This is CLI-related only and not a system option so we set the default here.
-        options.datastore.report_path = options.paths.config['cli']['report_path']
+        options.datastore.report_path = options.paths.reports
 
         on( '-h', '--help', 'Output this message.' ) do
             puts parser
