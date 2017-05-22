@@ -6,7 +6,6 @@
     web site for more information on licensing and terms of use.
 =end
 
-require 'terminal-table/import'
 require_relative 'dispatcher/option_parser'
 
 module SCNR

@@ -679,7 +679,7 @@ class OptionParser < UI::CLI::OptionParser
             'Directory or file path where to store the snapshot of a suspended scan.',
             'You can use the generated file to resume the scan with the \'scnr_restore\' executable.'
         ) do |path|
-            options.snapshot.save_path = path
+            options.paths.snapshots = path
         end
     end
 
@@ -746,7 +746,7 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate_snapshot_save_path
-        snapshot_path = options.snapshot.save_path
+        snapshot_path = options.paths.snapshots
         return if valid_save_path?( snapshot_path )
 
         print_bad "Snapshot path does not exist: #{snapshot_path}"

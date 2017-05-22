@@ -145,7 +145,7 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate_snapshot_save_path
-        snapshot_path = options.snapshot.save_path
+        snapshot_path = options.paths.snapshots
         return if !snapshot_path || File.directory?( snapshot_path )
 
         $stderr.puts "Snapshot directory does not exist: #{snapshot_path}"
