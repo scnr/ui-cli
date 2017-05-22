@@ -35,7 +35,7 @@ class OptionParser < UI::CLI::OptionParser
             'Directory or file path where to store the updated report ' <<
             'including only reproduced issues.',
             'You can use the generated file to create reports in several ' +
-                "formats with the 'scnr_engine_reporter' executable."
+                "formats with the 'scnr_reporter' executable."
         ) do |path|
             @updated_report_path = path
         end

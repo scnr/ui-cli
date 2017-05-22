@@ -665,7 +665,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--report-save-path PATH', String,
             'Directory or file path where to store the scan report.',
             'You can use the generated file to create reports in several ' +
-                "formats with the 'scnr_engine_reporter' executable."
+                "formats with the 'scnr_reporter' executable."
         ) do |path|
             options.datastore.report_path = path
         end
@@ -677,7 +677,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--snapshot-save-path PATH', String,
             'Directory or file path where to store the snapshot of a suspended scan.',
-            'You can use the generated file to resume the scan with the \'scnr_engine_restore\' executable.'
+            'You can use the generated file to resume the scan with the \'scnr_restore\' executable.'
         ) do |path|
             options.snapshot.save_path = path
         end
