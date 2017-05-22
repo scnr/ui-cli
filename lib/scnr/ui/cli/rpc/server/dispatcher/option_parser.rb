@@ -38,7 +38,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--external-address ADDRESS', 'Hostname or IP address to advertise.',
                "(Default: #{options.rpc.server_address})"
         ) do |address|
-            options.dispatcher.external_address = address
+            options.rpc.server_external_address = address
         end
 
         on( '--port NUMBER', 'Port to listen to.', Integer,
@@ -55,37 +55,37 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         separator ''
+        separator 'Grid'
+
+        on( '--neighbour URL', 'URL of a neighbouring Dispatcher.' ) do |url|
+            options.dispatcher.neighbour = url
+        end
+
+        separator ''
         separator 'Output'
 
-        on( '--reroute-to-logfile',
+        on( '--output-reroute-to-logfile',
                "Reroute all output to log-files under: #{options.paths.logs}"
         ) do
             options.output.reroute_to_logfile = true
         end
 
-        on( '--verbose', 'Show verbose output.',
+        on( '--output-verbose', 'Show verbose output.',
             "(Only applicable when '--reroute-to-logfile' is enabled.)"
         ) do
             verbose_on
         end
 
-        on( '--debug [LEVEL 1-3]', Integer, 'Show debugging information.',
+        on( '--output-debug [LEVEL 1-5]', Integer, 'Show debugging information.',
             "(Only applicable when '--reroute-to-logfile' is enabled.)"
         ) do |level|
             debug_on( level || 1 )
         end
 
-        on( '--only-positives', 'Only output positive results.',
+        on( '--output-only-positives', 'Only output positive results.',
             "(Only applicable when '--reroute-to-logfile' is enabled.)"
         ) do
             only_positives
-        end
-
-        separator ''
-        separator 'Grid'
-
-        on( '--neighbour URL', 'URL of a neighbouring Dispatcher.' ) do |url|
-            options.dispatcher.neighbour = url
         end
 
         separator ''
@@ -126,7 +126,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--snapshot-save-path DIRECTORY', String,
             'Directory under which to store snapshots of suspended scans.' ) do |path|
-            options.snapshot.save_path = path
+            options.paths.snapshots = path
         end
 
         separator ''

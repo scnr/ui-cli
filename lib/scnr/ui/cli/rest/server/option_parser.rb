@@ -48,25 +48,25 @@ class OptionParser < UI::CLI::OptionParser
         separator ''
         separator 'Output'
 
-        on( '--reroute-to-logfile',
+        on( '--output-reroute-to-logfile',
             "Reroute scan output to log-files under: #{options.paths.logs}"
         ) do
             options.output.reroute_to_logfile = true
         end
 
-        on( '--verbose', 'Show verbose output.',
+        on( '--output-verbose', 'Show verbose output.',
             "(Only applicable when '--reroute-to-logfile' is enabled.)"
         ) do
             verbose_on
         end
 
-        on( '--debug [LEVEL 1-3]', Integer, 'Show debugging information.',
+        on( '--output-debug [LEVEL 1-5]', Integer, 'Show debugging information.',
             "(Only applicable when '--reroute-to-logfile' is enabled.)"
         ) do |level|
             debug_on( level || 1 )
         end
 
-        on( '--only-positives', 'Only output positive results.',
+        on( '--output-only-positives', 'Only output positive results.',
             "(Only applicable when '--reroute-to-logfile' is enabled.)"
         ) do
             only_positives
