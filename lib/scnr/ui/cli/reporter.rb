@@ -36,7 +36,7 @@ class Reporter
 
         errors = false
         begin
-            report = Engine::Report.load( parser.report_path )
+            report = Engine::Report.load( SCNR::Engine::Options.report.path )
 
             reporters.each do |name, options|
                 @reporters.run( name, report, options, true )

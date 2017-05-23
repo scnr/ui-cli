@@ -39,6 +39,8 @@ class Reproduce
         report = parser.report
         issues  = parser.issues.any? ? parser.issues : report.issues
 
+        updated_report_path = SCNR::Engine::Options.report.path
+
         # Make sure we restore the options for the previous scan.
         Engine::Options.update report.options
 
@@ -95,7 +97,7 @@ class Reproduce
         print_line
 
         h1 'Updated report'
-        filepath = store_updated_report( parser.updated_report_path, reproduced_issues )
+        filepath = store_updated_report( updated_report_path, reproduced_issues )
         print_info 'Report with reproduced issues saved at:'
         print_info "    #{filepath}"
         print_line

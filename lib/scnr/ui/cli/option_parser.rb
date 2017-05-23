@@ -21,9 +21,6 @@ class OptionParser
         separator ''
         separator 'Generic'
 
-        # This is CLI-related only and not a system option so we set the default here.
-        options.datastore.report_path = options.paths.reports
-
         on( '-h', '--help', 'Output this message.' ) do
             puts parser
             exit
@@ -46,6 +43,7 @@ class OptionParser
             begin
                 block.call *bargs
             rescue => e
+                ap e
                 print_bad "#{args.first.split( /\s/ ).first}: [#{e.class}] #{e}"
                 exit 1
             end

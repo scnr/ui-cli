@@ -18,7 +18,6 @@ class OptionParser < UI::CLI::OptionParser
 
     attr_accessor :report
     attr_accessor :report_path
-    attr_accessor :updated_report_path
 
     attr_accessor :issues
     attr_accessor :issue_digests
@@ -37,7 +36,7 @@ class OptionParser < UI::CLI::OptionParser
             'You can use the generated file to create reports in several ' +
                 "formats with the 'scnr_reporter' executable."
         ) do |path|
-            @updated_report_path = path
+            SCNR::Engine::Options.report.path = path
         end
     end
 

@@ -10,7 +10,6 @@ require_relative 'queue/option_parser'
 
 module SCNR
 
-require 'scnr/engine/rpc/server/queue'
 require 'scnr/ui/cli/utilities'
 
 module UI::CLI
@@ -23,6 +22,7 @@ class Queue
     def initialize
         OptionParser.new.parse
 
+        require 'scnr/engine/rpc/server/queue'
         Arachni::Reactor.global.run do
             Engine::RPC::Server::Queue.new
         end

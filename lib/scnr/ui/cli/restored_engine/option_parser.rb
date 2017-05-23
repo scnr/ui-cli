@@ -60,7 +60,7 @@ class OptionParser < UI::CLI::OptionParser
             'You can use the generated file to resume the scan at a later time ' +
                 "with the 'scnr_engine_restore' executable."
         ) do |path|
-            options.paths.snapshots = path
+            options.snapshot.path = path
         end
     end
 
@@ -73,7 +73,7 @@ class OptionParser < UI::CLI::OptionParser
             "You can use the generated file to create reports in several " +
                 "formats with the 'scnr_engine_report' executable."
         ) do |path|
-            options.datastore.report_path = path
+            options.report.path = path
         end
     end
 
@@ -83,14 +83,12 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        @snapshot_path = ARGV.shift
+        SCNR::Engine::Options.snapshot.path = ARGV.shift
     end
 
     def validate
         validate_timeout
-        validate_report_path
         validate_snapshot_path
-        validate_snapshot_save_path
     end
 
     def validate_timeout
@@ -101,44 +99,17 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate_snapshot_path
-        if !@snapshot_path
+        if !SCNR::Engine::Options.snapshot.path
             print_error 'No snapshot file provided.'
             exit 1
         end
 
-        @snapshot_path = File.expand_path( @snapshot_path )
-
-        if !File.exists?( @snapshot_path )
-            print_error "Snapshot does not exist: #{@snapshot_path}"
-            exit 1
-        end
-
         begin
-            SCNR::Engine::Snapshot.read_metadata @snapshot_path
+            SCNR::Engine::Snapshot.read_metadata SCNR::Engine::Options.snapshot.path
         rescue SCNR::Engine::Snapshot::Error::InvalidFile => e
             print_error e.to_s
             exit 1
         end
-    end
-
-    def validate_snapshot_save_path
-        snapshot_path = options.paths.snapshots
-        return if valid_save_path?( snapshot_path )
-
-        print_error "Snapshot path does not exist: #{snapshot_path}"
-        exit 1
-    end
-
-    def validate_report_path
-        report_path = options.datastore.report_path
-        return if valid_save_path?( report_path )
-
-        print_error "Report path does not exist: #{report_path}"
-        exit 1
-    end
-
-    def valid_save_path?( path )
-        !path || File.directory?( path ) || !path.end_with?( '/' )
     end
 
     def banner

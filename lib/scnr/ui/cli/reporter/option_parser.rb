@@ -26,8 +26,6 @@ class OptionParser < UI::CLI::OptionParser
     # @see Reporter::Manager
     attr_accessor :reporters
 
-    attr_accessor :report_path
-
     def initialize(*)
         super
 
@@ -59,19 +57,12 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        @report_path = ARGV.shift
+        SCNR::Engine::Options.report.path = ARGV.shift
     end
 
     def validate
-        if !@report_path
+        if !SCNR::Engine::Options.report.path
             print_error 'No report file provided.'
-            exit 1
-        end
-
-        @report_path = File.expand_path( @report_path )
-
-        if !File.exists?( @report_path )
-            print_error "Report does not exist: #{@report_path}"
             exit 1
         end
 

@@ -125,8 +125,10 @@ class OptionParser < UI::CLI::OptionParser
         separator 'Snapshot'
 
         on( '--snapshot-save-path DIRECTORY', String,
-            'Directory under which to store snapshots of suspended scans.' ) do |path|
-            options.paths.snapshots = path
+            'Directory under which to store snapshots of suspended scans.',
+            "(Default: #{options.paths.snapshots})"
+        ) do |path|
+            options.snapshot.path = path
         end
 
         separator ''
@@ -138,18 +140,6 @@ class OptionParser < UI::CLI::OptionParser
         ) do |max_slots|
             options.system.max_slots = max_slots
         end
-    end
-
-    def validate
-        validate_snapshot_save_path
-    end
-
-    def validate_snapshot_save_path
-        snapshot_path = options.paths.snapshots
-        return if !snapshot_path || File.directory?( snapshot_path )
-
-        $stderr.puts "Snapshot directory does not exist: #{snapshot_path}"
-        exit 1
     end
 
 end

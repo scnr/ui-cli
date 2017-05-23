@@ -667,7 +667,7 @@ class OptionParser < UI::CLI::OptionParser
             'You can use the generated file to create reports in several ' +
                 "formats with the 'scnr_reporter' executable."
         ) do |path|
-            options.datastore.report_path = path
+            options.report.path = path
         end
     end
 
@@ -679,7 +679,7 @@ class OptionParser < UI::CLI::OptionParser
             'Directory or file path where to store the snapshot of a suspended scan.',
             'You can use the generated file to resume the scan with the \'scnr_restore\' executable.'
         ) do |path|
-            options.paths.snapshots = path
+            options.snapshot.path = path
         end
     end
 
@@ -725,8 +725,6 @@ class OptionParser < UI::CLI::OptionParser
 
     def validate
         validate_timeout
-        validate_report_path
-        validate_snapshot_save_path
         validate_session
         validate_url
     end
@@ -745,22 +743,6 @@ class OptionParser < UI::CLI::OptionParser
         exit 1
     end
 
-    def validate_snapshot_save_path
-        snapshot_path = options.paths.snapshots
-        return if valid_save_path?( snapshot_path )
-
-        print_bad "Snapshot path does not exist: #{snapshot_path}"
-        exit 1
-    end
-
-    def validate_report_path
-        report_path = options.datastore.report_path
-        return if valid_save_path?( report_path )
-
-        print_bad "Report path does not exist: #{report_path}"
-        exit 1
-    end
-
     def validate_session
         if (!options.session.check_url && options.session.check_pattern) ||
             (options.session.check_url && !options.session.check_pattern)
@@ -768,10 +750,6 @@ class OptionParser < UI::CLI::OptionParser
                             ' options are required.'
             exit 1
         end
-    end
-
-    def valid_save_path?( path )
-        !path || File.directory?( path ) || !path.end_with?( '/' )
     end
 
     def banner

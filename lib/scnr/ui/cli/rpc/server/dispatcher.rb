@@ -10,7 +10,6 @@ require_relative 'dispatcher/option_parser'
 
 module SCNR
 
-require 'scnr/engine/rpc/server/dispatcher'
 require 'scnr/ui/cli/utilities'
 
 module UI::CLI
@@ -23,6 +22,7 @@ class Dispatcher
     def initialize
         OptionParser.new.parse
 
+        require 'scnr/engine/rpc/server/dispatcher'
         Arachni::Reactor.global.run do
             Engine::RPC::Server::Dispatcher.new
         end

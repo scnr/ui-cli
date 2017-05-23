@@ -35,11 +35,11 @@ class RestoredEngine < Engine
         @timeout_suspend = parser.timeout_suspend?
 
         if parser.print_metadata?
-            print_metadata Engine::Snapshot.read_metadata( parser.snapshot_path )
+            print_metadata Engine::Snapshot.read_metadata( SCNR::Engine::Options.snapshot.path )
             exit
         end
 
-        framework.restore parser.snapshot_path
+        framework.restore SCNR::Engine::Options.snapshot.path
     end
 
     def print_metadata( metadata )
