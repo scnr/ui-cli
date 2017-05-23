@@ -46,6 +46,13 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         separator ''
+        separator 'Queue'
+
+        on( '--queue-url HOST:PORT', 'Queue to use.' ) do |url|
+            options.queue.url = url
+        end
+
+        separator ''
         separator 'Output'
 
         on( '--output-reroute-to-logfile',
@@ -145,6 +152,19 @@ class OptionParser < UI::CLI::OptionParser
                 ).alive?
             rescue => e
                 print_error "Could not reach Dispatcher at: #{SCNR::Engine::Options.dispatcher.url}"
+                print_error "#{e.class}: #{e.to_s}"
+                exit 1
+            end
+        end
+
+        if SCNR::Engine::Options.queue.url
+            begin
+                SCNR::Engine::RPC::Client::Queue.new(
+                    SCNR::Engine::Options.instance,
+                    SCNR::Engine::Options.queue.url
+                ).alive?
+            rescue => e
+                print_error "Could not reach Queue at: #{SCNR::Engine::Options.queue.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end
