@@ -137,6 +137,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--system-max-slots SLOTS', Integer,
             'Maximum amount of Instances to be alive at any given time.',
+            'Only applicable when no Dispatcher has been provided.',
             '(Default: auto)'
         ) do |max_slots|
             options.system.max_slots = max_slots
