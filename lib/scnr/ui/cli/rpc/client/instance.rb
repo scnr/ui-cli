@@ -37,11 +37,11 @@ class Instance
     attr_reader :error_log_file
     attr_reader :framework
 
-    # @param    [SCNR::Engine::Options]  options
-    # @param    [RPC::Client::Instance] instance    Instance to control.
+    # @param    [RPC::Client::Instance]     instance
+    #   Instance to control.
     # @param    [Integer]  timeout
-    def initialize( options, instance, timeout = nil )
-        @options  = options
+    def initialize( instance, timeout = nil )
+        @options  = SCNR::Engine::Options.instance
         @instance = instance
         @timeout  = timeout
 
@@ -50,7 +50,7 @@ class Instance
 
         # We don't need the engine for much, in this case only for report
         # generation, version number etc.
-        @framework = Engine::Framework.new(@options )
+        @framework = SCNR::Engine::Framework.new( @options )
         @issues    = []
     end
 
@@ -60,7 +60,7 @@ class Instance
 
         begin
             # Start the show!
-            @instance.service.scan prepare_rpc_options
+            @instance.scan prepare_rpc_options
 
             while busy?
                 if @timeout && Time.now >= timeout_time
@@ -119,7 +119,7 @@ class Instance
         @error_messages_cnt ||= 0
         @issue_digests      ||= []
 
-        progress = @instance.service.native_progress(
+        progress = @instance.native_progress(
             with:    [ :instances, :issues, errors: @error_messages_cnt ],
             without: [ issues: @issue_digests ]
         )
@@ -167,13 +167,15 @@ class Instance
         if !@options.audit.links? && !@options.audit.forms? &&
             !@options.audit.cookies? && !@options.audit.headers? &&
             !@options.audit.link_templates? && !@options.audit.jsons? &&
-            !@options.audit.xmls?
+            !@options.audit.xmls? && !@options.audit.ui_forms? &&
+            !@options.audit.ui_inputs?
 
             print_info 'No element audit options were specified, will audit ' <<
-                           'links, forms, cookies, JSONs and XMLs.'
+                           'links, forms, cookies, UI forms, UI inputs, JSONs and XMLs.'
             print_line
 
-            @options.audit.elements :links, :forms, :cookies, :jsons, :xmls
+            @options.audit.elements :links, :forms, :cookies, :jsons, :xmls,
+                                    :ui_forms, :ui_inputs
         end
 
         if @options.http.cookie_jar_filepath
@@ -194,7 +196,7 @@ class Instance
     def report_and_shutdown
         print_status 'Shutting down and retrieving the report, please wait...'
 
-        report = @instance.service.native_abort_and_report
+        report = @instance.native_abort_and_report
         shutdown
 
         @framework.reporters.run :stdout, report
@@ -210,7 +212,7 @@ class Instance
     end
 
     def shutdown
-        @instance.service.shutdown
+        @instance.shutdown
     end
 
     def statistics

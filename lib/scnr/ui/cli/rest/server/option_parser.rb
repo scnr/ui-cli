@@ -148,7 +148,6 @@ class OptionParser < UI::CLI::OptionParser
         if SCNR::Engine::Options.dispatcher.url
             begin
                 SCNR::Engine::RPC::Client::Dispatcher.new(
-                    SCNR::Engine::Options.instance,
                     SCNR::Engine::Options.dispatcher.url
                 ).alive?
             rescue => e
@@ -161,7 +160,6 @@ class OptionParser < UI::CLI::OptionParser
         if SCNR::Engine::Options.queue.url
             begin
                 SCNR::Engine::RPC::Client::Queue.new(
-                    SCNR::Engine::Options.instance,
                     SCNR::Engine::Options.queue.url
                 ).alive?
             rescue => e

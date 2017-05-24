@@ -23,9 +23,12 @@ class Queue
         OptionParser.new.parse
 
         require 'scnr/engine/rpc/server/queue'
-        Arachni::Reactor.global.run do
+
+        Arachni::Reactor.global.run_in_thread if !Arachni::Reactor.global.running?
+        Arachni::Reactor.global.schedule do
             Engine::RPC::Server::Queue.new
         end
+        Arachni::Reactor.global.wait
     end
 
 end

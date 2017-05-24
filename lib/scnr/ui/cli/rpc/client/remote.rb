@@ -46,10 +46,10 @@ class Remote
 
         options = parser.options
 
-        Arachni::Reactor.global.run_in_thread
-
         begin
-            dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( options, options.dispatcher.url )
+            dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new(
+                options.dispatcher.url
+            )
 
             # Get a new instance and assign the url we're going to audit as the 'owner'.
             instance_info = dispatcher.dispatch( options.url )
@@ -68,9 +68,10 @@ class Remote
 
         instance = nil
         begin
-            instance = SCNR::Engine::RPC::Client::Instance.new( options,
-                                                            instance_info['url'],
-                                                            instance_info['token'] )
+            instance = SCNR::Engine::RPC::Client::Instance.new(
+                instance_info['url'],
+                instance_info['token']
+            )
         rescue Arachni::RPC::Exceptions::ConnectionError => e
             print_error 'Could not connect to Instance.'
             print_debug "Error: #{e.to_s}."
@@ -79,7 +80,7 @@ class Remote
         end
 
         # Let the Instance UI manage the Instance from now on.
-        Instance.new( SCNR::Engine::Options.instance, instance, parser.get_timeout ).run
+        Instance.new( instance, parser.get_timeout ).run
     end
 
 end
