@@ -690,7 +690,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--timeout HOURS:MINUTES:SECONDS',
             'Stop the scan after the given duration is exceeded.'
         ) do |time|
-            @timeout = Engine::Utilities.hms_to_seconds( time )
+            @timeout = SCNR::Engine::Utilities.hms_to_seconds( time )
         end
     end
 

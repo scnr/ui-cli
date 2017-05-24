@@ -25,7 +25,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--timeout HOURS:MINUTES:SECONDS',
             'Stop the scan after the given duration is exceeded.'
         ) do |time|
-            @timeout = Engine::Utilities.hms_to_seconds( time )
+            @timeout = SCNR::Engine::Utilities.hms_to_seconds( time )
         end
     end
 
@@ -83,7 +83,7 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        SCNR::Engine::Options.snapshot.path = ARGV.shift
+        options.snapshot.path = ARGV.shift
     end
 
     def validate
@@ -99,13 +99,13 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate_snapshot_path
-        if !SCNR::Engine::Options.snapshot.path
+        if !options.snapshot.path
             print_error 'No snapshot file provided.'
             exit 1
         end
 
         begin
-            SCNR::Engine::Snapshot.read_metadata SCNR::Engine::Options.snapshot.path
+            SCNR::Engine::Snapshot.read_metadata options.snapshot.path
         rescue SCNR::Engine::Snapshot::Error::InvalidFile => e
             print_error e.to_s
             exit 1

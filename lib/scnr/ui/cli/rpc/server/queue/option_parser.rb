@@ -154,13 +154,13 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate
-        if SCNR::Engine::Options.dispatcher.url
+        if options.dispatcher.url
             begin
                 SCNR::Engine::RPC::Client::Dispatcher.new(
-                    SCNR::Engine::Options.dispatcher.url
+                    options.dispatcher.url
                 ).alive?
             rescue => e
-                print_error "Could not reach Dispatcher at: #{SCNR::Engine::Options.dispatcher.url}"
+                print_error "Could not reach Dispatcher at: #{options.dispatcher.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end

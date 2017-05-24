@@ -36,7 +36,7 @@ class OptionParser < UI::CLI::OptionParser
             'You can use the generated file to create reports in several ' +
                 "formats with the 'scnr_reporter' executable."
         ) do |path|
-            SCNR::Engine::Options.report.path = path
+            options.report.path = path
         end
     end
 

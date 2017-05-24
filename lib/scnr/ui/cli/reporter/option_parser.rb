@@ -57,11 +57,11 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        SCNR::Engine::Options.report.path = ARGV.shift
+        options.report.path = ARGV.shift
     end
 
     def validate
-        if !SCNR::Engine::Options.report.path
+        if !options.report.path
             print_error 'No report file provided.'
             exit 1
         end
@@ -69,7 +69,7 @@ class OptionParser < UI::CLI::OptionParser
         if reporters.any?
             begin
                 framework.reporters.load( reporters.keys )
-            rescue Component::Error::NotFound => e
+            rescue SCNR::Engine::Component::Error::NotFound => e
                 print_error e
                 print_info 'Available reporters are:'
                 print_info framework.reporters.available.join( ', ' )

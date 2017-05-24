@@ -145,13 +145,13 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate
-        if SCNR::Engine::Options.dispatcher.neighbour
+        if options.dispatcher.neighbour
             begin
                 SCNR::Engine::RPC::Client::Dispatcher.new(
-                    SCNR::Engine::Options.dispatcher.neighbour
+                    options.dispatcher.neighbour
                 ).alive?
             rescue => e
-                print_error "Could not reach neighbour at: #{SCNR::Engine::Options.dispatcher.neighbour}"
+                print_error "Could not reach neighbour at: #{options.dispatcher.neighbour}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end
