@@ -6,6 +6,8 @@
     web site for more information on licensing and terms of use.
 =end
 
+require 'scnr/engine/rpc/client'
+
 require_relative '../../../engine/option_parser'
 
 module SCNR
@@ -50,16 +52,19 @@ class OptionParser < UI::CLI::Engine::OptionParser
     end
 
     def validate
-        validate_dispatcher
-        super
-    end
-
-    def validate_dispatcher
-        # Check for missing Dispatcher
-        if !options.dispatcher.url
-            print_error "Missing '--dispatcher-url' option."
-            exit 1
+        if SCNR::Engine::Options.dispatcher.url
+            begin
+                SCNR::Engine::RPC::Client::Dispatcher.new(
+                    SCNR::Engine::Options.dispatcher.url
+                ).alive?
+            rescue => e
+                print_error "Could not reach Dispatcher at: #{SCNR::Engine::Options.dispatcher.url}"
+                print_error "#{e.class}: #{e.to_s}"
+                exit 1
+            end
         end
+
+        super
     end
 
     def banner
