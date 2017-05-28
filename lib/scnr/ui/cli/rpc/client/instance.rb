@@ -52,15 +52,23 @@ class Instance
         # generation, version number etc.
         @framework = SCNR::Engine::Framework.new( @options )
         @issues    = []
+
+        @progress_mutex = Mutex.new
     end
 
     def run
         timeout_time = Time.now + @timeout.to_i
         timed_out    = false
 
+        get_user_command
+
         begin
-            # Start the show!
-            @instance.scan prepare_rpc_options
+
+            # We may be re-attaching, don't call scan again.
+            if @instance.status == :ready
+                # Start the show!
+                @instance.scan prepare_rpc_options
+            end
 
             while busy?
                 if @timeout && Time.now >= timeout_time
@@ -73,6 +81,8 @@ class Instance
                 refresh_progress
             end
         rescue Interrupt
+            print_info "Detached from: #{@instance.url}/#{@instance.token}"
+            return
         rescue => e
             print_exception e
         end
@@ -90,6 +100,10 @@ class Instance
 
         print_banner
 
+        print_line
+        print_info "Attached to: #{@instance.url}/#{@instance.token}"
+        print_line
+
         print_issues
         print_line
 
@@ -101,10 +115,83 @@ class Instance
             print_line
         end
 
-        print_info "('Ctrl+C' aborts the scan and retrieves the report)"
-        print_line
+        if !suspending? && !aborting?
+            print_info
+            print_info 'Hit:'
+
+            {
+                'Enter' => 'force refresh',
+                'p'     => 'pause the scan',
+                'r'     => 'resume the scan',
+                'a'     => 'abort the scan',
+                's'     => 'suspend the scan to disk',
+                'g'     => 'generate a report'
+            }.each do |key, action|
+                next if %w(Enter s p).include?( key ) && !scanning?
+                next if key == 'r' && !(paused? || pausing?)
+
+                print_info "  '#{key}' to #{action}."
+            end
+
+            print_line
+            print_info "('Ctrl+C' detaches from the Instance.)"
+            print_line
+
+            if @report_filepath
+                print_info "Report saved at:   #{@report_filepath} [#{@report_filesize}MB]"
+                print_line
+            end
+
+        end
 
         flush
+    end
+
+    %w(paused pausing suspended suspending scanning aborting).each do |s|
+        define_method "#{s}?" do
+            status == s.to_sym
+        end
+    end
+
+    def get_user_command
+        Thread.new do
+            command = gets.strip
+
+            get_user_command
+
+            case command
+
+                # Abort
+                when 'a'
+                    @abort = true
+
+                # Pause
+                when 'p'
+                    return if !scanning?
+
+                    @pause_id = @instance.pause
+
+                # Resume
+                when 'r'
+                    return if !paused?
+                    @instance.resume
+
+                # Suspend
+                when 's'
+                    return if !scanning?
+                    @instance.suspend
+
+                # Generate reports.
+                when 'g'
+                    generate_reports
+
+                when ''
+                    get_user_command
+            end
+
+            refresh_progress
+            print_progress
+        end
     end
 
     def has_errors?
@@ -116,39 +203,41 @@ class Instance
     end
 
     def refresh_progress
-        @error_messages_cnt ||= 0
-        @issue_digests      ||= []
+        @progress_mutex.synchronize do
+            @error_messages_cnt ||= 0
+            @issue_digests      ||= []
 
-        progress = @instance.native_progress(
-            with:    [ :instances, :issues, errors: @error_messages_cnt ],
-            without: [ issues: @issue_digests ]
-        )
+            progress = @instance.native_progress(
+                with:    [ :instances, :issues, errors: @error_messages_cnt ],
+                without: [ issues: @issue_digests ]
+            )
 
-        return if !progress
+            return if !progress
 
-        @progress = progress
-        @issues  |= @progress[:issues]
+            @progress = progress
+            @issues  |= @progress[:issues]
 
-        @issues = @issues.sort_by(&:digest).sort_by(&:severity).reverse
+            @issues = @issues.sort_by(&:digest).sort_by(&:severity).reverse
 
-        # Keep issue digests and error messages in order to ask not to retrieve
-        # them on subsequent progress calls in order to save bandwidth.
-        @issue_digests  |= @progress[:issues].map( &:digest )
+            # Keep issue digests and error messages in order to ask not to retrieve
+            # them on subsequent progress calls in order to save bandwidth.
+            @issue_digests  |= @progress[:issues].map( &:digest )
 
-        if @progress[:errors].any?
-            error_log_file = @instance.url.gsub( ':', '_' )
-            @error_log_file = "#{error_log_file}.error.log"
+            if @progress[:errors].any?
+                error_log_file = @instance.url.gsub( ':', '_' )
+                @error_log_file = "#{error_log_file}.error.log"
 
-            File.open( @error_log_file, 'a' ) { |f| f.write @progress[:errors].join( "\n" ) }
+                File.open( @error_log_file, 'a' ) { |f| f.write @progress[:errors].join( "\n" ) }
 
-            @error_messages_cnt += @progress[:errors].size
+                @error_messages_cnt += @progress[:errors].size
+            end
+
+            @progress
         end
-
-        @progress
     end
 
     def busy?
-        !!progress[:busy]
+        !aborting? && !!progress[:busy]
     end
 
     # Laconically output the discovered issues.
@@ -196,19 +285,32 @@ class Instance
     def report_and_shutdown
         print_status 'Shutting down and retrieving the report, please wait...'
 
-        report = @instance.native_abort_and_report
+        generate_reports( true )
+
+        print_line
+        print_info "Report saved at:   #{@report_filepath} [#{@report_filesize}MB]"
+
+        if @instance.status == :suspended
+            print_info "Snapshot saved at: #{@instance.snapshot_path}"
+        end
+
         shutdown
-
-        @framework.reporters.run :stdout, report
-
-        filepath = report.save( @options.report.path )
-        filesize = (File.size( filepath ).to_f / 2**20).round(2)
-
-        print_info "Report saved at: #{filepath} [#{filesize}MB]"
 
         print_line
         print_statistics
         print_line
+    end
+
+    def generate_reports( abort = false )
+        if abort
+            report = @instance.native_abort_and_report
+            @framework.reporters.run :stdout, report
+        else
+            report = @instance.native_report
+        end
+
+        @report_filepath = report.save( @options.report.path )
+        @report_filesize = (File.size( @report_filepath ).to_f / 2**20).round(2)
     end
 
     def shutdown
@@ -220,6 +322,7 @@ class Instance
     end
 
     def status
+        return :aborting if @abort
         progress[:status]
     end
 
