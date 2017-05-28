@@ -72,6 +72,7 @@ class Remote
                 instance_info['url'],
                 instance_info['token']
             )
+            instance.alive?
         rescue Arachni::RPC::Exceptions::ConnectionError => e
             print_error 'Could not connect to Instance.'
             print_debug "Error: #{e.to_s}."
