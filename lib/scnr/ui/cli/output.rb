@@ -169,6 +169,11 @@ module Output
 
     private
 
+    def output_root
+        @output_root ||=
+            File.expand_path( File.dirname( __FILE__ ) + '/../../../' ) + '/'
+    end
+
     # Prints a message prefixed with a colored sign.
     #
     # @param    [String]    sign
