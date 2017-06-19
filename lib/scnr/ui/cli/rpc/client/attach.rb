@@ -17,9 +17,6 @@ require 'scnr/ui/cli/utilities'
 module UI::CLI
 module RPC::Client
 
-# Provides a command-line RPC client and uses a {RPC::Server::Dispatcher} to
-# provide an {RPC::Server::Instance} in order to perform a scan.
-#
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class Attach
     include Output
