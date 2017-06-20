@@ -67,8 +67,8 @@ class List
             print_line "Priority: #{priority} [#{ids.size}]"
             print_line
 
-            ids.each do |id|
-                print_line "* #{id}"
+            ids.each.with_index do |id, i|
+                print_line "[#{i+1}] #{id}"
             end
 
             print_line
@@ -81,8 +81,8 @@ class List
         print_status "Running [#{r.size}]"
         print_line
 
-        r.each do |id, info|
-            print_line "#{id}: #{info['url']}/#{info['token']}"
+        r.each.with_index do |(id, info), i|
+            print_line "[#{i+1}] #{id}: #{info['url']}/#{info['token']}"
         end
     end
 
@@ -92,8 +92,8 @@ class List
         print_ok "Completed [#{c.size}]"
         print_line
 
-        c.each do |id, report|
-            print_line "#{id}: #{report}"
+        c.each.with_index do |(id, report), i|
+            print_line "[#{i+1}] #{id}: #{report}"
         end
     end
 
@@ -103,8 +103,8 @@ class List
         print_bad "Failed [#{f.size}]"
         print_line
 
-        f.each do |id, info|
-            print_line "#{id}: [#{info['error']}] #{info['description']}"
+        f.each.with_index do |(id, info), i|
+            print_line "[#{i+1}] #{id}: [#{info['error']}] #{info['description']}"
         end
     end
 
