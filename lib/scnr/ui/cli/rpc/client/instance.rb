@@ -101,7 +101,9 @@ class Instance
         print_banner
 
         print_line
-        print_info "Attached to: #{@instance.url}/#{@instance.token}"
+        print_info "#{@instance.url}/#{@instance.token}"
+        print_info "Queue:       #{queue_url || 'n/a'}"
+        print_info "Dispatcher:  #{dispatcher_url || 'n/a'}"
         print_line
 
         print_issues
@@ -128,6 +130,7 @@ class Instance
                 'g'     => 'generate a report'
             }.each do |key, action|
                 next if %w(Enter s p).include?( key ) && !scanning?
+                next if %w(a s).include?( key ) && queue_url
                 next if key == 'r' && !(paused? || pausing?)
 
                 print_info "  '#{key}' to #{action}."
@@ -153,6 +156,14 @@ class Instance
         end
     end
 
+    def queue_url
+        @progress[:queue_url]
+    end
+
+    def dispatcher_url
+        @progress[:dispatcher_url]
+    end
+
     def get_user_command
         Thread.new do
             command = gets.strip
@@ -163,6 +174,7 @@ class Instance
 
                 # Abort
                 when 'a'
+                    return if queue_url
                     @abort = true
 
                 # Pause
@@ -178,7 +190,7 @@ class Instance
 
                 # Suspend
                 when 's'
-                    return if !scanning?
+                    return if !scanning? || queue_url
                     @instance.suspend
 
                 # Generate reports.
