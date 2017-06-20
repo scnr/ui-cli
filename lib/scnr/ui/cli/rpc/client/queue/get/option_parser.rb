@@ -29,10 +29,6 @@ class OptionParser < UI::CLI::OptionParser
         @ids = []
     end
 
-    def list_all?
-        !@queued && !@running && !completed && !failed
-    end
-
     def ssl
         separator ''
         separator 'SSL'
