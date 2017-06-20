@@ -67,6 +67,11 @@ class OptionParser < UI::CLI::OptionParser
             exit 1
         end
 
+        if @ids.empty?
+            print_error 'Missing scan IDs.'
+            exit 1
+        end
+
         begin
             SCNR::Engine::RPC::Client::Queue.new( options.queue.url ).alive?
         rescue => e
