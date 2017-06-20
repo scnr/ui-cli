@@ -36,9 +36,9 @@ class DispatcherMonitor
 
         begin
             # start the RPC client
-            @dispatcher = Engine::RPC::Client::Dispatcher.new( options, options.dispatcher.url )
+            @dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( options.dispatcher.url )
             @dispatcher.alive?
-        rescue Engine::RPC::Exceptions::ConnectionError => e
+        rescue Arachni::RPC::Exceptions::ConnectionError => e
             print_error "Could not connect to Dispatcher at '#{options.url}'."
             print_error "Error: #{e.to_s}."
             print_debug_backtrace e
@@ -57,32 +57,35 @@ class DispatcherMonitor
         print_line
 
         loop do
+            empty_screen
             move_to_home
-            stats        = @dispatcher.statistics
-            running_jobs = stats['running_jobs']
+
+            stats = @dispatcher.statistics
+            running_instances = stats['running_instances']
 
             print_banner
             print_stats( stats )
 
             print_line
 
-            print_job_table( running_jobs )
+            print_instance_table( running_instances )
 
             sleep 1
         end
 
     end
 
-    def print_job_table( jobs )
-        headings = [ 'PID', 'Port', 'Owner', 'Birthdate (Server-side)',
-            'Start time (Server-side)', 'Current time (Server-side)', 'Age',
-            'Run-time']
+    def print_instance_table( instances )
+        headings = [ 'PID', 'URL', 'Owner', 'Birthdate (Server-side)',
+            'Current time (Server-side)', 'Age']
 
         rows = []
-        jobs.each do |job|
-            rows << [ job['pid'], job['port'], job['owner'],
-                job['birthdate'], job['starttime'], job['currtime'],
-                seconds_to_hms( job['age'] ), seconds_to_hms( job['runtime'] )]
+        instances.each do |instance|
+            rows << [
+                instance['pid'], "#{instance['url']}/#{instance['token']}", instance['owner'],
+                instance['birthdate'], instance['now'],
+                seconds_to_hms( instance['age'] )
+            ]
         end
 
         return if rows.empty?
@@ -91,10 +94,25 @@ class DispatcherMonitor
     end
 
     def print_stats( stats )
-        print_info 'Number of finished instances: ' + stats['finished_jobs'].size.to_s
-        print_info 'Number of running instances:  ' + stats['running_jobs'].size.to_s
-        print_info 'Initial pool size: ' + stats['init_pool_size'].to_s
-        print_info 'Current pool size: ' + stats['curr_pool_size'].to_s
+        print_info "Utilization:        #{(stats['utilization'] * 100).round(1)}%"
+        print_info "Running instances:  #{stats['running_instances'].size}"
+        print_info "Finished instances: #{stats['finished_instances'].size}"
+
+        print_line
+
+        if stats['node']['neighbours'].any?
+            print_info 'Neighbours:'
+            stats['node']['neighbours'].each do |neighbour|
+                print_info "* #{neighbour}"
+            end
+        end
+
+        if stats['node']['unreachable_neighbours'].any?
+            print_info 'Unreachable neighbours:'
+            stats['node']['unreachable_neighbours'].each do |neighbour|
+                print_info "* #{neighbour}"
+            end
+        end
     end
 
     def proc_mem( rss )
@@ -119,32 +137,6 @@ class DispatcherMonitor
     def seconds_to_hms( secs )
         secs = secs.to_i
         [secs/3600, secs/60 % 60, secs % 60].map { |t| t.to_s.rjust( 2, '0' ) }.join(':')
-    end
-
-    #
-    # Outputs help/usage information.<br/>
-    # Displays supported options and parameters.
-    #
-    def usage
-        print_line <<USAGE
-  Usage:  #{File.basename( $0 )} host:port
-
-  Supported options:
-
-
-    SSL --------------------------
-
-    --ssl-pkey=<file>           Location of the SSL private key (.pem)
-                                  (Used to verify the the client to the servers.)
-
-    --ssl-cert=<file>           Location of the SSL certificate (.pem)
-                                  (Used to verify the the client to the servers.)
-
-    --ssl-ca=<file>             Location of the CA certificate (.pem)
-                                  (Used to verify the servers to the client.)
-
-
-USAGE
     end
 
 end
