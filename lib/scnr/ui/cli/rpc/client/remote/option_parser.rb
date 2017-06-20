@@ -68,7 +68,7 @@ class OptionParser < UI::CLI::Engine::OptionParser
     end
 
     def banner
-        "Usage: #{$0} [options] --dispatcher-url HOST:PORT URL"
+        "Usage: #{$0} [options] --dispatcher-url=HOST:PORT URL"
     end
 
 end
