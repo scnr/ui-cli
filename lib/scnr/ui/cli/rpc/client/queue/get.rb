@@ -35,7 +35,7 @@ class Get
             end
 
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not list from Queue at '#{options.queue.url}'."
+            print_error "Could not get from Queue at '#{options.queue.url}'."
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1
