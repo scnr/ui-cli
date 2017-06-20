@@ -87,7 +87,9 @@ class Instance
             print_exception e
         end
 
-        report_and_shutdown
+        if !queue_url
+            report_and_shutdown
+        end
 
         return if !timed_out
         print_error 'Timeout was reached.'
