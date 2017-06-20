@@ -29,9 +29,13 @@ class Attach
         begin
             @queue = SCNR::Engine::RPC::Client::Queue.new( options.queue.url )
 
-            if id = @queue.attach( parser.url, parser.token )
+            id = @queue.attach( parser.url, parser.token )
+
+            if id
                 print_ok "Attached '#{parser.url}/#{parser.token}' to " <<
                              "'#{options.queue.url}' as '#{id}'."
+            elsif id == false
+                print_bad "'#{parser.url}/#{parser.token}' is already attached to a Queue."
             else
                 print_bad "Could not attach '#{parser.url}/#{parser.token}' to " <<
                               "'#{options.queue.url}' because it is inaccessible from the Queue host."
