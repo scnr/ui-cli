@@ -46,22 +46,6 @@ class OptionParser < UI::CLI::OptionParser
         end
     end
 
-    def validate
-        if options.dispatcher.url
-            begin
-                SCNR::Engine::RPC::Client::Dispatcher.new(
-                    options.dispatcher.url
-                ).alive?
-            rescue => e
-                print_error "Could not reach Dispatcher at: #{options.dispatcher.url}"
-                print_error "#{e.class}: #{e.to_s}"
-                exit 1
-            end
-        end
-
-        super
-    end
-
     def after_parse
         instance = ARGV.shift
         @url, @token = instance.split( '/' )
