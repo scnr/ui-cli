@@ -6,7 +6,7 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative 'attach/option_parser'
+require_relative 'connect/option_parser'
 require_relative 'instance'
 
 module SCNR
@@ -18,11 +18,11 @@ module UI::CLI
 module RPC::Client
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
-class Attach
+class Connect
     include Output
 
     def initialize
-        parser = Attach::OptionParser.new
+        parser = Connect::OptionParser.new
         parser.ssl
         parser.parse
 

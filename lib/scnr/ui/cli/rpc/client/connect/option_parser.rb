@@ -15,7 +15,7 @@ module UI::CLI
 
 module RPC
 module Client
-class Attach
+class Connect
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::OptionParser

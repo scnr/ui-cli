@@ -8,11 +8,11 @@
 =end
 
 require 'scnr/ui/cli'
-require 'scnr/ui/cli/rpc/client/attach'
+require 'scnr/ui/cli/rpc/client/connect'
 
 if SCNR::Engine.windows?
     SCNR::UI::CLI::Output.print_error 'This interface is not available on MS Windows.'
     exit
 end
 
-SCNR::UI::CLI::RPC::Client::Attach.new
+SCNR::UI::CLI::RPC::Client::Connect.new

@@ -70,15 +70,16 @@ class Instance
                 sleep 5
                 refresh_progress
             end
+
+            if !queue_url
+                report_and_shutdown
+            end
         rescue Interrupt
-            print_info "Detached from: #{@instance.url}/#{@instance.token}"
+            print_line
+            print_status "Disconnected from: #{@instance.url}/#{@instance.token}"
             return
         rescue => e
             print_exception e
-        end
-
-        if !queue_url
-            report_and_shutdown
         end
     end
 
@@ -90,9 +91,16 @@ class Instance
         print_banner
 
         print_line
-        print_info "#{@instance.url}/#{@instance.token}"
-        print_info "Queue:       #{queue_url || 'n/a'}"
-        print_info "Dispatcher:  #{dispatcher_url || 'n/a'}"
+        print_status "#{@instance.url}/#{@instance.token}"
+
+        if queue_url
+            print_info "Queue:      #{queue_url}"
+        end
+
+        if dispatcher_url
+            print_info "Dispatcher: #{dispatcher_url}"
+        end
+
         print_line
 
         print_issues
@@ -126,7 +134,7 @@ class Instance
             end
 
             print_line
-            print_info "('Ctrl+C' detaches from the Instance.)"
+            print_info "('Ctrl+C' disconnects from the Instance.)"
             print_line
 
             if @report_filepath
