@@ -80,25 +80,7 @@ class Engine
                     restore_output_options
                     clear_screen
                 end
-
-                @timeout_supervisor.kill if @timeout_supervisor
             end
-
-            if @timeout
-                @timeout_supervisor = Thread.new do
-                    sleep @timeout
-
-                    if @timeout_suspend
-                        print_error 'Timeout has been reached, suspending.'
-                        suspend
-                    else
-                        print_error 'Timeout has been reached, shutting down.'
-                        shutdown
-                    end
-                end
-            end
-
-            @timeout_supervisor.join if @timeout_supervisor
             @scan.join
 
             # If the user requested to abort the scan, wait for the thread
@@ -111,6 +93,11 @@ class Engine
 
             if has_error_log?
                 print_info "The scan has logged errors: #{error_logfile}"
+            end
+
+            if File.exist? @framework.snapshot_path
+                filesize = (File.size( @framework.snapshot_path ).to_f / 2**20).round(2)
+                print_info "Snapshot saved at: #{@framework.snapshot_path} [#{filesize}MB]"
             end
 
             print_statistics
@@ -348,17 +335,11 @@ class Engine
                 capture_output_options
 
                 generate_reports
-
-                filesize = (File.size( @framework.snapshot_path ).to_f / 2**20).round(2)
-                print_info "Snapshot saved at: #{@framework.snapshot_path} [#{filesize}MB]"
-
-                print_line
             end
         end
     end
 
     def shutdown
-        @timeout_supervisor.kill if @timeout_supervisor && Thread.current != @timeout_supervisor
         capture_output_options
 
         print_status 'Aborting...'
@@ -420,11 +401,7 @@ class Engine
         parser.report
         parser.snapshot
         parser.timeout
-        parser.timeout_suspend
         parser.parse
-
-        @timeout         = parser.get_timeout
-        @timeout_suspend = parser.timeout_suspend?
 
         @daemon_friendly = parser.daemon_friendly?
 

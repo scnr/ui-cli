@@ -687,19 +687,17 @@ class OptionParser < UI::CLI::OptionParser
         separator ''
         separator 'Timeout'
 
-        on( '--timeout HOURS:MINUTES:SECONDS',
+        on( '--timeout-duration HOURS:MINUTES:SECONDS',
             'Stop the scan after the given duration is exceeded.'
         ) do |time|
-            @timeout = SCNR::Engine::Utilities.hms_to_seconds( time )
+            options.timeout.duration = SCNR::Engine::Utilities.hms_to_seconds( time )
         end
-    end
 
-    def timeout_suspend
         on( '--timeout-suspend',
             'Suspend after the timeout.',
             'You can use the generated file to resume the scan with the \'scnr_engine_restore\' executable.'
         ) do
-            @timeout_suspend = true
+            options.timeout.suspend = true
         end
     end
 

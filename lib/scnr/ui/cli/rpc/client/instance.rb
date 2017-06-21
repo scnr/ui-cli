@@ -39,11 +39,9 @@ class Instance
 
     # @param    [RPC::Client::Instance]     instance
     #   Instance to control.
-    # @param    [Integer]  timeout
-    def initialize( instance, timeout = nil )
+    def initialize( instance )
         @options  = SCNR::Engine::Options.instance
         @instance = instance
-        @timeout  = timeout
 
         clear_screen
         move_to_home
@@ -57,9 +55,6 @@ class Instance
     end
 
     def run
-        timeout_time = Time.now + @timeout.to_i
-        timed_out    = false
-
         get_user_command
 
         begin
@@ -71,11 +66,6 @@ class Instance
             end
 
             while busy?
-                if @timeout && Time.now >= timeout_time
-                    timed_out = true
-                    break
-                end
-
                 print_progress
                 sleep 5
                 refresh_progress
@@ -90,9 +80,6 @@ class Instance
         if !queue_url
             report_and_shutdown
         end
-
-        return if !timed_out
-        print_error 'Timeout was reached.'
     end
 
     private

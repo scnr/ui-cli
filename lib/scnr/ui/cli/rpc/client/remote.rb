@@ -81,7 +81,7 @@ class Remote
         end
 
         # Let the Instance UI manage the Instance from now on.
-        Instance.new( instance, parser.get_timeout ).run
+        Instance.new( instance ).run
     end
 
 end
