@@ -33,8 +33,20 @@ class SystemInfo
         system = SCNR::Engine::System
         slots  = system.slots
 
+        msg = "Scans that can be run in parallel: #{slots.available}"
+        if slots.available > 0
+            print_status msg
+        else
+            print_bad msg
+        end
+        print_line
+
         print_status 'Available slots in:'
         print_line
+
+        print_ok "CPU:   #{system.cpu_count}"
+        print_info '  Required: 1'
+        print_info '  Free:     N/A'
 
         show_hint = false
         if (s = slots.available_in_memory) > 0
@@ -61,6 +73,8 @@ class SystemInfo
             if valid_size > 0
                 print_info "  Hint:     Try: --browser-cluster-pool-size=#{valid_size}"
             end
+
+            options.browser_cluster.pool_size = ps
         end
 
         show_hint = false
