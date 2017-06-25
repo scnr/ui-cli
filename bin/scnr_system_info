@@ -10,4 +10,4 @@
 require 'scnr/ui/cli'
 require 'scnr/ui/cli/system_info'
 
-SCNR::UI::CLI::SystemInfo.new
+SCNR::UI::CLI::SystemInfo.new.run

@@ -7,6 +7,7 @@
 =end
 
 require 'scnr/engine'
+require_relative 'system_info'
 require_relative 'engine/option_parser'
 require_relative 'utilities'
 
@@ -68,8 +69,10 @@ class Engine
         return if !SCNR::Engine::System.max_utilization?
 
         print_bad 'Cannot perform the scan, the system has no available slots.'
-        print_info "Run 'scnr_system_info' for more information " <<
-            "or set '--system-slots-override' to override this safeguard."
+        print_line
+        SystemInfo.new.slot_info
+        print_line
+        print_info "Set '--system-slots-override' to override this safeguard."
 
         exit 1
     end

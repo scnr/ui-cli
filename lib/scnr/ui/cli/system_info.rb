@@ -15,14 +15,21 @@ module UI::CLI
 class SystemInfo
     include Output
 
-    def initialize
+    def run
         print_line UI::CLI::BANNER
         print_line
 
+        system_info
+        print_line
+        slot_info
+    end
+
+    def system_info
         print_status "Ruby:     #{RUBY_VERSION} p#{RUBY_PATCHLEVEL}"
         print_status "Platform: #{RUBY_PLATFORM}"
-        print_line
+    end
 
+    def slot_info
         system = SCNR::Engine::System
         slots  = system.slots
 
@@ -51,7 +58,9 @@ class SystemInfo
                 break
             end
 
-            print_info "  Hint:     Try: --browser-cluster-pool-size=#{valid_size}"
+            if valid_size > 0
+                print_info "  Hint:     Try: --browser-cluster-pool-size=#{valid_size}"
+            end
         end
 
         show_hint = false
@@ -68,6 +77,10 @@ class SystemInfo
         if show_hint
             print_info "  Hint:     Try changing the 'tmpdir' location in: #{options.paths.class.paths_config_file}"
         end
+    end
+
+    def options
+        SCNR::Engine::Options
     end
 
     private
