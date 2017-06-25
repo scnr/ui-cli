@@ -45,8 +45,8 @@ class SystemInfo
         print_line
 
         print_ok "CPU:   #{system.cpu_count}"
-        print_info '  Required: 1'
-        print_info '  Free:     N/A'
+        print_info '  Required:  1'
+        print_info '  Available: N/A'
 
         show_hint = false
         if (s = slots.available_in_memory) > 0
@@ -55,8 +55,8 @@ class SystemInfo
             print_bad "RAM:   #{s}"
             show_hint = true
         end
-        print_info "  Required: #{bytes_to_gb( slots.memory_size )} GB"
-        print_info "  Free:     #{bytes_to_gb( system.memory_free )} GB"
+        print_info "  Required:  #{bytes_to_gb( slots.memory_size )} GB"
+        print_info "  Available: #{bytes_to_gb( system.memory_free )} GB"
 
         if show_hint
             ps         = options.browser_cluster.pool_size
@@ -71,7 +71,7 @@ class SystemInfo
             end
 
             if valid_size > 0
-                print_info "  Hint:     Try: --browser-cluster-pool-size=#{valid_size}"
+                print_info "  Hint:      Try: --browser-cluster-pool-size=#{valid_size}"
             end
 
             options.browser_cluster.pool_size = ps
@@ -84,12 +84,12 @@ class SystemInfo
             print_bad "Disk:  #{s}"
             show_hint = true
         end
-        print_info "  Location: #{system.disk_directory}"
-        print_info "  Required: #{bytes_to_gb( slots.disk_space )} GB"
-        print_info "  Free:     #{bytes_to_gb( system.disk_space_free )} GB"
+        print_info "  Location:  #{system.disk_directory}"
+        print_info "  Required:  #{bytes_to_gb( slots.disk_space )} GB"
+        print_info "  Available: #{bytes_to_gb( system.disk_space_free )} GB"
 
         if show_hint
-            print_info "  Hint:     Try changing the 'tmpdir' location in: #{options.paths.class.paths_config_file}"
+            print_info "  Hint:      Try changing the 'tmpdir' location in: #{options.paths.class.paths_config_file}"
         end
     end
 
@@ -100,7 +100,7 @@ class SystemInfo
     private
 
     def bytes_to_gb( bytes )
-        (Float( bytes ) / 1024 / 1024 / 1024).round(2)
+        (Float( bytes ) / 1024 / 1024 / 1024).round(1)
     end
 
 end
