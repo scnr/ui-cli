@@ -29,6 +29,17 @@ class OptionParser < UI::CLI::OptionParser
         end
     end
 
+    def system
+        separator ''
+        separator 'System'
+
+        on( '--system-slots-override',
+            'Override automated slot calculation and run the scan.'
+        ) do
+            options.system.max_slots = 1
+        end
+    end
+
     def timeout_suspend
         on( '--timeout-suspend',
             'Suspend after the timeout.',

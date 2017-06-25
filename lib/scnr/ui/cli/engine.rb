@@ -16,7 +16,6 @@ module UI::CLI
 # Provides a command line interface for the {SCNR::Engine::Framework}.
 #
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
-# @version 0.3
 class Engine
     include Output
     include Utilities
@@ -30,6 +29,7 @@ class Engine
         @framework = SCNR::Engine::Framework.new
 
         parse_options
+        ensure_available_slots
 
         # Reset the engine's HTTP interface so that options will take effect.
         @framework.http.reset
@@ -62,6 +62,16 @@ class Engine
 
         # Kick the tires and light the fires.
         run
+    end
+
+    def ensure_available_slots
+        return if !SCNR::Engine::System.max_utilization?
+
+        print_bad 'Cannot perform the scan, the system has no available slots.'
+        print_info "Run 'scnr_system_info' for more information " <<
+            "or set '--system-slots-override' to override this safeguard."
+
+        exit 1
     end
 
     private
@@ -401,6 +411,7 @@ class Engine
         parser.report
         parser.snapshot
         parser.timeout
+        parser.system
         parser.parse
 
         @daemon_friendly = parser.daemon_friendly?

@@ -29,6 +29,7 @@ class RestoredEngine < Engine
         parser.snapshot
         parser.timeout
         parser.timeout_suspend
+        parser.system
         parser.parse
 
         @timeout         = parser.get_timeout
