@@ -165,6 +165,12 @@ class OptionParser < UI::CLI::OptionParser
                 substitution
         end
 
+        on( '--scope-https-only', 'Forces the system to only follow HTTPS URLs.',
+            "(Default: #{!!options.scope.https_only})"
+        ) do
+            options.scope.https_only = true
+        end
+
         on( '--scope-dom-depth-limit LIMIT', Integer,
                'How deep to go into the DOM tree of each page, for pages with JavaScript code.',
                "(Default: #{options.scope.dom_depth_limit})",
@@ -180,11 +186,13 @@ class OptionParser < UI::CLI::OptionParser
             options.scope.dom_event_limit = limit
         end
 
-        on( '--scope-https-only', 'Forces the system to only follow HTTPS URLs.',
-            "(Default: #{!!options.scope.https_only})"
-        ) do
-            options.scope.https_only = true
+        on( '--scope-dom-event-inheritance-limit LIMIT', Integer,
+            'How many elements should inherit the DOM events of their parents.',
+            "(Default: #{options.scope.dom_event_inheritance_limit.nil? ? 'inf' : options.scope.dom_event_inheritance_limit })",
+        ) do |limit|
+            options.scope.dom_event_inheritance_limit = limit
         end
+
     end
 
     def system
