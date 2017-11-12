@@ -17,7 +17,6 @@ module Output
     include SCNR::Engine::UI::OutputInterface
 
     def self.initialize
-        @@verbose         = false
         @@mute            = false
         @@only_positives  = false
     end
@@ -111,26 +110,6 @@ module Output
             puts str
         rescue
         end
-    end
-
-    # Enables {#print_verbose} messages.
-    #
-    # @see #verbose?
-    def verbose_on
-        @@verbose = true
-    end
-    alias :verbose :verbose_on
-
-    # Disables {#print_verbose} messages.
-    #
-    # @see #verbose?
-    def verbose_off
-        @@verbose = false
-    end
-
-    # @return    [Bool]
-    def verbose?
-        @@verbose
     end
 
     # Mutes everything but {#print_ok} messages.
