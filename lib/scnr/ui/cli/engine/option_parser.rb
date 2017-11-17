@@ -595,6 +595,13 @@ class OptionParser < UI::CLI::OptionParser
         separator ''
         separator 'Browser cluster'
 
+        on( "--browser-cluster-engine #{options.browser_cluster.class::ENGINES.join( ', ' )}",
+            'Browser engine to use.',
+            "(Default: #{options.browser_cluster.engine})"
+        ) do |engine|
+            options.browser_cluster.engine = engine
+        end
+
         on( '--browser-cluster-local-storage FILE',
             "Sets the browsers' local storage using the JSON data in FILE."
         ) do |file|
