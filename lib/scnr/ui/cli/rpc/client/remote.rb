@@ -38,6 +38,7 @@ class Remote
         parser.session
         parser.profiles
         parser.browser_cluster
+        parser.device
         parser.grid
         parser.ssl
         parser.report

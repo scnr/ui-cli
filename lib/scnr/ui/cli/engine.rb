@@ -411,6 +411,7 @@ class Engine
         parser.session
         parser.profiles
         parser.browser_cluster
+        parser.device
         parser.report
         parser.snapshot
         parser.timeout

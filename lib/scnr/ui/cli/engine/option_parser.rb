@@ -28,8 +28,8 @@ class OptionParser < UI::CLI::OptionParser
     def authorized_by
         on( '--authorized-by EMAIL_ADDRESS',
                'E-mail address of the person who authorized the scan.',
-               "(It'll make it easier on the sys-admins during log reviews.)",
-               "(Will be used as a value for the 'From' HTTP request header.)"
+               "Will be used as a value for the 'From' HTTP request header.",
+               "It'll make it easier on the sys-admins during log reviews.",
         ) do |email_address|
             options.authorized_by = email_address
         end
@@ -70,7 +70,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--scope-include-pattern PATTERN', Regexp,
             'Only include resources whose path/action matches PATTERN.',
-            '(Can be used multiple times.)'
+            'Can be used multiple times.'
         ) do |pattern|
             options.scope.include_path_patterns << pattern
         end
@@ -83,7 +83,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--scope-exclude-pattern PATTERN', Regexp,
                'Exclude resources whose path/action matches PATTERN.',
-               '(Can be used multiple times.)'
+               'Can be used multiple times.'
         ) do |pattern|
             options.scope.exclude_path_patterns << pattern
         end
@@ -97,22 +97,22 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--scope-exclude-content-pattern PATTERN', Regexp,
                'Exclude pages whose content matches PATTERN.',
-               '(Can be used multiple times.)'
+               'Can be used multiple times.'
         ) do |pattern|
             options.scope.exclude_content_patterns << pattern
         end
 
         on( '--scope-exclude-binaries',
             'Exclude non text-based pages.',
-            '(Binary content can confuse passive checks that perform pattern matching.)'
+            'Binary content can confuse passive checks that perform pattern matching.'
         ) do
             options.scope.exclude_binaries = true
         end
 
         on( '--scope-redundant-path-pattern PATTERN:LIMIT',
                'Limit crawl on redundant pages like galleries or catalogs.',
-               '(URLs matching PATTERN will be crawled LIMIT amount of times.)',
-               '(Can be used multiple times.)'
+               'URLs matching PATTERN will be crawled LIMIT amount of times.',
+               'Can be used multiple times.'
         ) do |rule|
             pattern, counter = rule.split( ':', 2 )
             options.scope.redundant_path_patterns[ Regexp.new( pattern ) ] =
@@ -128,8 +128,8 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--scope-directory-depth-limit LIMIT', Integer,
                'Directory depth limit.',
-               '(Default: inf)',
-               '(How deep SCNR::Engine should go into the site structure.)'
+               'How deep SCNR::Engine should go into the site structure.',
+                '(Default: inf)',
         ) do |depth|
             options.scope.directory_depth_limit = depth
         end
@@ -143,14 +143,14 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--scope-extend-paths FILE',
                'Add the paths in FILE to the ones discovered by the crawler.',
-               '(Can be used multiple times.)'
+               'Can be used multiple times.'
         ) do |file|
             options.scope.extend_paths |= paths_from_file( file )
         end
 
         on( '--scope-restrict-paths FILE',
                'Use the paths in FILE instead of crawling.',
-               '(Can be used multiple times.)'
+               'Can be used multiple times.'
         ) do |file|
             options.scope.restrict_paths |= paths_from_file( file )
         end
@@ -224,7 +224,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--audit-cookies-extensively',
                'Submit all links and forms of the page along with the cookie permutations.',
-               '(*WARNING*: This will severely increase the scan-time.)'
+               '*WARNING*: This will severely increase the scan-time.'
         ) do
             options.audit.cookies_extensively = true
         end
@@ -239,7 +239,7 @@ class OptionParser < UI::CLI::OptionParser
             '  http://example.com/input1/value1/input2/value2',
             'Use:',
             '  input1/(?<input1>\w+)/input2/(?<input2>\w+)',
-            '(Can be used multiple times.)'
+            'Can be used multiple times.'
         ) do |pattern|
             # We merge this way to enforce validation from the options group.
             options.audit.link_templates |= [pattern]
@@ -290,20 +290,20 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--audit-with-both-methods',
                'Audit elements with both GET and POST requests.',
-               '(*WARNING*: This will severely increase the scan-time.)'
+               '*WARNING*: This will severely increase the scan-time.'
         ) do
             options.audit.with_both_http_methods = true
         end
 
         on( '--audit-exclude-vector PATTERN', Regexp,
                'Exclude input vectors whose name matches PATTERN.',
-               '(Can be used multiple times.)' ) do |name|
+               'Can be used multiple times.' ) do |name|
             options.audit.exclude_vector_patterns << name
         end
 
         on( '--audit-include-vector PATTERN', Regexp,
             'Include only input vectors whose name matches PATTERN.',
-            '(Can be used multiple times.)' ) do |name|
+            'Can be used multiple times.' ) do |name|
             options.audit.include_vector_patterns << name
         end
     end
@@ -312,18 +312,11 @@ class OptionParser < UI::CLI::OptionParser
         separator ''
         separator 'HTTP'
 
-        on( '--http-user-agent USER_AGENT',
-            "Value for the 'User-Agent' HTTP request header.",
-            "(Default: #{options.http.user_agent})"
-        ) do |user_agent|
-            options.http.user_agent = user_agent
-        end
-
         on( '--http-request-concurrency MAX_CONCURRENCY', Integer,
                'Maximum HTTP request concurrency.',
-               "(Default: #{options.http.request_concurrency})",
-               '(Be careful not to kill your server.)',
-               '(*NOTE*: If your scan seems unresponsive try lowering the limit.)'
+               'Be careful not to kill your server.',
+               '*NOTE*: If your scan seems unresponsive try lowering the limit.',
+                "(Default: #{options.http.request_concurrency})",
         ) do |concurrency|
             options.http.request_concurrency = concurrency
         end
@@ -353,9 +346,9 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--http-request-header NAME=VALUE',
             'Specify custom headers to be included in the HTTP requests.',
-            '(Can be used multiple times.)'
-        ) do |user_agent|
-            header, val = user_agent.split( '=', 2 )
+            'Can be used multiple times.'
+        ) do |header|
+            header, val = header.split( '=', 2 )
             options.http.request_headers[header] = val
         end
 
@@ -390,7 +383,9 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         on( "--http-authentication-type #{SCNR::Engine::OptionGroups::HTTP::AUTHENTICATION_TYPES.join(',')}",
-            'HTTP authentication type.', '(Default: auto)' ) do |type|
+            'HTTP authentication type.',
+            '(Default: auto)'
+        ) do |type|
             options.http.authentication_type = type
         end
 
@@ -406,7 +401,8 @@ class OptionParser < UI::CLI::OptionParser
 
         on( "--http-proxy-type #{SCNR::Engine::OptionGroups::HTTP::PROXY_TYPES.join(',')}",
             SCNR::Engine::OptionGroups::HTTP::PROXY_TYPES,
-               'Proxy type.', '(Default: auto)'
+            'Proxy type.',
+            '(Default: auto)'
         ) do |type|
             options.http.proxy_type = type
         end
@@ -470,7 +466,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--checks-list [GLOB]',
                'List available checks based on the provided glob.',
-               '(If no glob is provided all checks will be listed.)'
+               'If no glob is provided all checks will be listed.'
         ) do |pattern|
             list_checks( framework.list_checks( pattern ) )
             exit
@@ -501,7 +497,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--plugins-list [GLOB]',
                'List available plugins based on the provided glob.',
-               '(If no glob is provided all plugins will be listed.)'
+               'If no glob is provided all plugins will be listed.'
         ) do |pattern|
             list_plugins( framework.list_plugins( pattern ) )
             exit
@@ -509,8 +505,8 @@ class OptionParser < UI::CLI::OptionParser
 
         on( "--plugin 'PLUGIN:OPTION=VALUE,OPTION2=VALUE2'",
                "PLUGIN is the name of the plugin as displayed by '--plugins-list'.",
-               "(Plugins are referenced by their filename without the '.rb' extension, use '--plugins-list' to list all.)",
-               '(Can be used multiple times.)'
+               "Plugins are referenced by their filename without the '.rb' extension, use '--plugins-list' to list all.",
+               'Can be used multiple times.'
         ) do |plugin|
             prepare_component_options( options.plugins, plugin )
         end
@@ -527,16 +523,16 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--platforms-no-fingerprinting',
                'Disable platform fingerprinting.',
-               '(By default, the system will try to identify the deployed server-side platforms automatically',
-               'in order to avoid sending irrelevant payloads.)'
+               'By default, the system will try to identify the deployed server-side platforms automatically',
+               'in order to avoid sending irrelevant payloads.'
         ) do
             options.no_fingerprinting = true
         end
 
         on( '--platforms PLATFORM,PLATFORM2,...',
                'Comma separated list of platforms (by shortname) to audit.',
-               '(The given platforms will be used *in addition* to fingerprinting. In order to restrict the audit to',
-               "these platforms enable the '--platforms-no-fingerprinting' option.)"
+               'The given platforms will be used *in addition* to fingerprinting. In order to restrict the audit to',
+               "these platforms enable the '--platforms-no-fingerprinting' option."
         ) do |platforms|
             options.platforms |= platforms.split( ',' )
         end
@@ -549,7 +545,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--session-check-url URL', String,
                'URL to use to verify that the scanner is still logged in ' <<
                    'to the web application.',
-               "(Requires 'session-check-pattern'.)"
+               "Requires 'session-check-pattern'."
         ) do |url|
             options.session.check_url = url.to_s
         end
@@ -557,7 +553,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--session-check-pattern PATTERN', Regexp,
                "Pattern used against the body of the 'session-check-url'" <<
                    ' to verify that the scanner is still logged in to the web application.',
-               "(Requires 'session-check-url'.)"
+               "Requires 'session-check-url'."
         ) do |pattern|
             options.session.check_pattern = pattern
         end
@@ -569,7 +565,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--input-value PATTERN:VALUE',
             'PATTERN to match against input names and VALUE to use for them.',
-            '(Can be used multiple times.)'
+            'Can be used multiple times.'
         ) do |rule|
             pattern, value = rule.split( ':', 2 )
             options.input.values[Regexp.new(pattern)] = value
@@ -588,6 +584,54 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--input-force', 'Fill-in even non-empty inputs.' ) do
             options.input.force = true
+        end
+    end
+
+    def device
+        separator ''
+        separator 'Device'
+
+        on( '--device-visible',
+            'Show the browser window instead of running in headless mode.',
+            'Useful for debugging login procedures and other website interactions.',
+            'Will significantly decrease performance.',
+            "(Default: #{options.device.visible?})"
+        ) do
+            options.device.visible!
+        end
+
+        on( '--device-width', Integer,
+            'Screen width.',
+            "(Default: #{options.device.width})"
+        ) do |width|
+            options.device.width = width
+        end
+
+        on( '--device-height', Integer,
+            'Screen height.',
+            "(Default: #{options.device.height})"
+        ) do |height|
+            options.device.height = height
+        end
+
+        on( '--device-user-agent USER_AGENT',
+            "Value for the 'User-Agent' HTTP request header and JS API.",
+            "(Default: #{options.device.user_agent})"
+        ) do |user_agent|
+            options.device.user_agent = user_agent
+        end
+
+        on( '--device-pixel-ratio', Float,
+            'Pixel ratio.',
+            "(Default: #{options.device.pixel_ratio})"
+        ) do |pixel_ratio|
+            options.device.pixel_ratio = pixel_ratio
+        end
+
+        on( '--device-touch', 'Touch device?',
+            "(Default: #{options.device.touch?})"
+        ) do
+            options.device.touch!
         end
     end
 
@@ -656,20 +700,6 @@ class OptionParser < UI::CLI::OptionParser
             "(Default: #{!options.browser_cluster.ignore_images})"
         ) do
             options.browser_cluster.ignore_images = false
-        end
-
-        on( '--browser-cluster-screen-width', Integer,
-            'Browser screen width.',
-            "(Default: #{options.browser_cluster.screen_width})"
-        ) do |width|
-            options.browser_cluster.screen_width = width
-        end
-
-        on( '--browser-cluster-screen-height', Integer,
-            'Browser screen height.',
-            "(Default: #{options.browser_cluster.screen_height})"
-        ) do |height|
-            options.browser_cluster.screen_height = height
         end
     end
 
