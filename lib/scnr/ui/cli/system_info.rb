@@ -25,8 +25,14 @@ class SystemInfo
     end
 
     def system_info
-        print_status "Ruby:     #{RUBY_VERSION} p#{RUBY_PATCHLEVEL}"
-        print_status "Platform: #{RUBY_PLATFORM}"
+        print_status "Ruby:      #{RUBY_VERSION} p#{RUBY_PATCHLEVEL}"
+        print_status "Platform:  #{RUBY_PLATFORM}"
+
+        if SCNR::Engine.has_extension?
+            print_ok 'Extension: Supported'
+        else
+            print_bad 'Extension: Unsupported'
+        end
     end
 
     def slot_info
@@ -35,24 +41,25 @@ class SystemInfo
 
         msg = "Scans that can be run in parallel: #{slots.available}"
         if slots.available > 0
-            print_status msg
+            print_info msg
         else
             print_bad msg
         end
+
+        print_line
+        print_line '-------------------------------------------'
         print_line
 
-        print_status 'Available slots in:'
-        print_line
-
-        print_ok "CPU:   #{system.cpu_count}"
+        print_ok "CPU:   #{system.cpu_count} slots"
         print_info '  Required:  1'
         print_info '  Available: N/A'
+        print_line
 
         show_hint = false
         if (s = slots.available_in_memory) > 0
-            print_ok "RAM:   #{s}"
+            print_ok "RAM:   #{s} slots"
         else
-            print_bad "RAM:   #{s}"
+            print_bad "RAM:   #{s} slots"
             show_hint = true
         end
         print_info "  Required:  #{bytes_to_gb( slots.memory_size )} GB"
@@ -76,12 +83,13 @@ class SystemInfo
 
             options.browser_cluster.pool_size = ps
         end
+        print_line
 
         show_hint = false
         if (s = slots.available_in_disk) > 0
-            print_ok "Disk:  #{s}"
+            print_ok "Disk:  #{s} slots"
         else
-            print_bad "Disk:  #{s}"
+            print_bad "Disk:  #{s} slots"
             show_hint = true
         end
         print_info "  Location:  #{system.disk_directory}"
