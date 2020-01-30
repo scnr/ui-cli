@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 =begin
-    Copyright 2017 Sarosys LLC <http://www.sarosys.com>
+    Copyright 2020 Tasos Laskos <tasos.laskos@gmail.com>
 
     This file is part of the SCNR::UI::CLI project and is subject to
     redistribution and commercial restrictions. Please see the SCNR::UI::CLI
@@ -9,5 +9,15 @@
 
 require 'scnr/ui/cli'
 require 'scnr/ui/cli/engine'
+
+# require 'scnr/monitor'
+# require 'scnr/monitor/client'
+#
+# SCNR::Monitor::Client.write_to_rest(
+#     'http://localhost:1111/',
+#     'Disk test -- pre dom event JS-side limit',
+#     without_object_space: true,
+#     interval: 5
+# )
 
 SCNR::UI::CLI::Engine.new

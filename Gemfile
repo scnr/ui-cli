@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'bootsnap', require: false
+
 gem 'rake', '~> 10.0'
 gem 'pry'
 
@@ -18,7 +20,7 @@ group :prof do
 end
 
 gem 'scnr-engine', path: '../engine'
-# gem 'ethon',       github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
+gem 'ethon',       github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 # gem 'typhoeus',    github: 'typhoeus/typhoeus'
 
 gemspec
