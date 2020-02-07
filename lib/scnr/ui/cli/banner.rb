@@ -13,11 +13,10 @@ module SCNR
 module UI
 module CLI
 
-    WEBSITE = 'http://sarosys.com'
+    WEBSITE = 'http://placeholder.com'
 
     BANNER =<<EOBANNER
 SCNR::UI::CLI v#{CLI::VERSION} - SCNR::Engine v#{Engine::VERSION}
-   by Sarosys LLC <#{WEBSITE}>
 EOBANNER
 
 end
