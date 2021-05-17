@@ -48,7 +48,7 @@ class Instance
 
         # We don't need the engine for much, in this case only for report
         # generation, version number etc.
-        @framework = SCNR::Engine::Framework.new( @options )
+        @framework = SCNR::Engine::Framework.unsafe
         @issues    = []
 
         @progress_mutex = Mutex.new

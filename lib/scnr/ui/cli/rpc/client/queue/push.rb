@@ -22,7 +22,7 @@ class Push
 
     def initialize
         @options   = SCNR::Engine::Options.instance
-        @framework = SCNR::Engine::Framework.new( @options )
+        @framework = SCNR::Engine::Framework.unsafe
 
         parser = Push::OptionParser.new
         parser.authorized_by

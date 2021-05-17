@@ -22,7 +22,7 @@ class OptionParser < UI::CLI::OptionParser
         super
 
         # Listing components can be handled here but we need a framework for that.
-        @framework = SCNR::Engine::Framework.new
+        @framework = SCNR::Engine::Framework.unsafe
     end
 
     def authorized_by

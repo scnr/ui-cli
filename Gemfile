@@ -15,6 +15,7 @@ group :prof do
     #     gem 'scnr-monitor', path: '../monitor'
     # end
 
+    gem 'stackprof'
     gem 'benchmark-ips'
     gem 'memory_profiler'
 end

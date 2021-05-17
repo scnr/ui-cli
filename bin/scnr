@@ -14,7 +14,7 @@ require 'scnr/ui/cli/engine'
 # require 'scnr/monitor/client'
 #
 # SCNR::Monitor::Client.write_to_rest(
-#     'http://localhost:1111/',
+#     'http://localhost:4567/',
 #     'Disk test -- pre dom event JS-side limit',
 #     without_object_space: true,
 #     interval: 5

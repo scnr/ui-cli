@@ -29,7 +29,7 @@ class OptionParser < UI::CLI::OptionParser
     def initialize(*)
         super
 
-        @framework = SCNR::Engine::Framework.new
+        @framework = SCNR::Engine::Framework.unsafe
         @reporters = {}
     end
 

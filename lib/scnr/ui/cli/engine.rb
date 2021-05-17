@@ -27,7 +27,7 @@ class Engine
     # Initializes the command line interface and the {Framework}.
     def initialize
         # Instantiate the big-boy!
-        @framework = SCNR::Engine::Framework.new
+        @framework = SCNR::Engine::Framework.unsafe
 
         parse_options
         ensure_available_slots
@@ -138,9 +138,9 @@ class Engine
         refresh_line nil, unmute
         refresh_info( "Audited #{statistics[:audited_pages]} page snapshots.", unmute )
 
-        if @framework.options.scope.page_limit
+        if SCNR::Engine::Options.scope.page_limit
             refresh_info( 'Audit limited to a max of ' <<
-                "#{@framework.options.scope.page_limit} pages.", unmute )
+                "#{SCNR::Engine::Options.scope.page_limit} pages.", unmute )
         end
 
         refresh_line nil, unmute
