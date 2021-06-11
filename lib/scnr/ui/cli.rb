@@ -18,17 +18,6 @@ module SCNR
 module UI
 module CLI
 
-    class <<self
-
-        # @return   [Bool]
-        #   `true` if the `SCNR_ENGINE_PROFILE` env variable is set, `false` otherwise.
-        def profile?
-            !!ENV['SCNR_ENGINE_PROFILE']
-        end
-
-    end
-
-
 end
 end
 end

@@ -66,7 +66,7 @@ class Engine
     end
 
     def ensure_available_slots
-        return if !SCNR::Engine::System.max_utilization?
+        return if !Cuboid::System.max_utilization?
 
         print_bad 'Cannot perform the scan, the system has no available slots.'
         print_line

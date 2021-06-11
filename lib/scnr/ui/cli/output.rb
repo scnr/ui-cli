@@ -164,7 +164,7 @@ module Output
         return if muted? && !unmute
 
         str = personalize_output( string )
-        str = add_resource_usage_statistics( str ) if UI::CLI.profile?
+        str = add_resource_usage_statistics( str ) if profile?
 
         # We may get IO errors...freaky stuff...
         begin
@@ -210,6 +210,12 @@ module Output
         rss * 4096.0 / 1024.0 / 1024.0
     end
 
+    # @return   [Bool]
+    #   `true` if the `SCNR_ENGINE_PROFILE` env variable is set, `false` otherwise.
+    def profile?
+        !!ENV['SCNR_ENGINE_PROFILE']
+    end
+
     extend self
 
 end
@@ -218,11 +224,14 @@ end
 end
 
 module Engine
-module UI
-
-    Output = SCNR::UI::CLI::Output
-
+    module UI
+        Output = SCNR::UI::CLI::Output
+    end
 end
 end
 
+module Cuboid
+    module UI
+        Output = SCNR::UI::CLI::Output
+    end
 end

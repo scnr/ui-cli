@@ -36,7 +36,7 @@ class SystemInfo
     end
 
     def slot_info
-        system = SCNR::Engine::System
+        system = Cuboid::System
         slots  = system.slots
 
         msg = "Scans that can be run in parallel: #{slots.available}"
