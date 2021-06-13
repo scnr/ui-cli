@@ -6,7 +6,7 @@
     web site for more information on licensing and terms of use.
 =end
 
-require 'scnr/engine'
+require 'cuboid'
 
 module SCNR
 module UI::CLI
