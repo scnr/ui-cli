@@ -16,12 +16,13 @@ group :prof do
     # end
 
     gem 'stackprof'
+    gem 'ruby-prof'
     gem 'benchmark-ips'
     gem 'memory_profiler'
 end
 
 gem 'scnr-engine', path: '../engine'
-gem 'cuboid', path: '../../cuboid'
+gem 'cuboid',      path: '../../qadron/cuboid'
 # gem 'ethon',       github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 # gem 'typhoeus',    github: 'typhoeus/typhoeus'
 
