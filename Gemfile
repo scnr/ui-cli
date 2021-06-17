@@ -23,6 +23,7 @@ end
 
 gem 'scnr-engine', path: '../engine'
 gem 'cuboid',      path: '../../qadron/cuboid'
+gem 'dsel',      path: '../../qadron/dsel'
 # gem 'ethon',       github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 # gem 'typhoeus',    github: 'typhoeus/typhoeus'
 

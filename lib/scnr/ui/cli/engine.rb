@@ -6,7 +6,7 @@
     web site for more information on licensing and terms of use.
 =end
 
-require 'scnr/engine'
+require 'scnr/engine/api'
 require_relative 'system_info'
 require_relative 'engine/option_parser'
 require_relative 'utilities'
@@ -26,14 +26,13 @@ class Engine
 
     # Initializes the command line interface and the {Framework}.
     def initialize
-        # Instantiate the big-boy!
-        @framework = SCNR::Engine::Framework.unsafe
+        @scan = SCNR::Engine::API.new.scan
 
         parse_options
         ensure_available_slots
 
         # Reset the engine's HTTP interface so that options will take effect.
-        @framework.http.reset
+        SCNR::Engine::HTTP::Client.reset
 
         @show_command_screen = nil
         @cleanup_handler     = nil
@@ -87,14 +86,14 @@ class Engine
 
         begin
             # We may need to kill the audit so put it in a thread.
-            @scan = Thread.new do
-                @framework.run do
+            @scan_thread = Thread.new do
+                @scan.run do
                     hide_command_screen
                     restore_output_options
                     clear_screen
                 end
             end
-            @scan.join
+            @scan_thread.join
 
             # If the user requested to abort the scan, wait for the thread
             # that takes care of the clean-up to finish.
@@ -108,9 +107,9 @@ class Engine
                 print_info "The scan has logged errors: #{error_logfile}"
             end
 
-            if File.exist? @framework.snapshot_path
-                filesize = (File.size( @framework.snapshot_path ).to_f / 2**20).round(2)
-                print_info "Snapshot saved at: #{@framework.snapshot_path} [#{filesize}MB]"
+            if @snapshot_path
+                filesize = (File.size( @snapshot_path ).to_f / 2**20).round(2)
+                print_info "Snapshot saved at: #{@snapshot_path} [#{filesize}MB]"
             end
 
             print_statistics
@@ -130,7 +129,7 @@ class Engine
     end
 
     def print_statistics( unmute = false )
-        statistics = @framework.statistics
+        statistics = @scan.statistics
 
         http            = statistics[:http]
         browser_cluster = statistics[:browser_cluster]
@@ -201,12 +200,12 @@ class Engine
                     raise e
                 end
 
-                refresh_info "Status: #{@framework.status.to_s.capitalize}"
-                @framework.status_messages.each do |message|
+                refresh_info "Status: #{@scan.status.to_s.capitalize}"
+                @scan.status_messages.each do |message|
                     refresh_info "  #{message}"
                 end
 
-                if !@framework.suspend?
+                if !@scan.suspending?
                     refresh_info
                     refresh_info 'Hit:'
 
@@ -222,8 +221,8 @@ class Engine
                             "#{' ' * 11}(You can set it to the desired level by sending d[1-4]," <<
                             " current level is #{debug_level})"
                     }.each do |key, action|
-                        next if %w(Enter s p).include?( key ) && !@framework.scanning?
-                        next if key == 'r' && !(@framework.paused? || @framework.pausing?)
+                        next if %w(Enter s p).include?( key ) && !@scan.scanning?
+                        next if key == 'r' && !(@scan.paused? || @scan.pausing?)
 
                         refresh_info "  '#{key}' to #{action}."
                     end
@@ -266,19 +265,18 @@ class Engine
 
                 # Pause
                 when 'p'
-                    return if !@framework.scanning?
+                    return if !@scan.scanning?
 
-                    @pause_id = @framework.pause
+                    @scan.pause!
 
                 # Resume
                 when 'r'
-                    return if !@pause_id
-                    @framework.resume @pause_id
-                    @pause_id = nil
+                    return if !@scan.pausing? || !@scan.paused?
+                    @scan.resume!
 
                 # Suspend
                 when 's'
-                    return if !@framework.scanning?
+                    return if !@scan.scanning?
                     suspend
 
                 # Generate reports.
@@ -340,7 +338,7 @@ class Engine
     def suspend
         @cleanup_handler = Thread.new do
             exception_jail do
-                @framework.suspend
+                @snapshot_path = @scan.suspend!
 
                 hide_command_screen
                 clear_screen
@@ -363,7 +361,7 @@ class Engine
             exception_jail do
                 killed.pop
 
-                @framework.clean_up
+                @scan.abort!
 
                 hide_command_screen
                 restore_output_options
@@ -373,16 +371,16 @@ class Engine
             end
         end
 
-        @scan.kill
+        @scan_thread.kill
         killed << true
     end
 
     def generate_reports
         capture_output_options
 
-        report = @framework.report
+        report = @scan.generate_report
 
-        @framework.reporters.run :stdout, report
+        SCNR::Engine::Reporter::Manager.new.run :stdout, report
 
         filepath = report.save( options.report.path )
         filesize = (File.size( filepath ).to_f / 2**20).round(2)
@@ -421,51 +419,51 @@ class Engine
         @daemon_friendly = parser.daemon_friendly?
 
         if options.checks.any?
-            begin
-                options.checks = @framework.checks.load( options.checks )
-            rescue SCNR::Engine::Component::Error::NotFound => e
-                print_error e
-                print_info 'Available checks are:'
-                print_info @framework.checks.available.join( ', ' )
-                print_line
-                print_info 'Use the \'--checks-list\' parameter to see a ' <<
-                               'detailed list of all available checks.'
-                exit 1
-            end
+        #     begin
+        #         @scan.checks.load( options.checks )
+        #     rescue SCNR::Engine::Component::Error::NotFound => e
+        #         print_error e
+        #         print_info 'Available checks are:'
+        #         print_info @scan.checks.available.join( ', ' )
+        #         print_line
+        #         print_info 'Use the \'--checks-list\' parameter to see a ' <<
+        #                        'detailed list of all available checks.'
+        #         exit 1
+        #     end
         else
             print_info 'No checks were specified, loading all.'
-            options.checks = @framework.checks.load( '*' )
+            options.checks = ['*']
         end
 
-        @framework.plugins.load_defaults
-        if options.plugins.any?
-            begin
-                @framework.plugins.load( options.plugins.keys )
-            rescue SCNR::Engine::Component::Error::NotFound => e
-                print_error e
-                print_info 'Available plugins are:'
-                print_info @framework.plugins.available.join( ', ' )
-                print_line
-                print_info 'Use the \'--plugins-list\' parameter to see a ' <<
-                               'detailed list of all available plugins.'
-                exit 1
-            end
-        end
-
-        if options.platforms.any?
-            begin
-                SCNR::Engine::Platform::Manager.new( options.platforms )
-            rescue SCNR::Engine::Platform::Error::Invalid => e
-                options.platforms.clear
-                print_error e
-                print_info 'Available platforms are:'
-                print_info Platform::Manager.new.valid.to_a.join( ', ' )
-                print_line
-                print_info 'Use the \'--platforms-list\' parameter to see a' <<
-                               ' detailed list of all available platforms.'
-                exit 1
-            end
-        end
+        # @scan.plugins.load_defaults
+        # if options.plugins.any?
+        #     begin
+        #         @scan.plugins.load( options.plugins.keys )
+        #     rescue SCNR::Engine::Component::Error::NotFound => e
+        #         print_error e
+        #         print_info 'Available plugins are:'
+        #         print_info @scan.plugins.available.join( ', ' )
+        #         print_line
+        #         print_info 'Use the \'--plugins-list\' parameter to see a ' <<
+        #                        'detailed list of all available plugins.'
+        #         exit 1
+        #     end
+        # end
+        #
+        # if options.platforms.any?
+        #     begin
+        #         SCNR::Engine::Platform::Manager.new( options.platforms )
+        #     rescue SCNR::Engine::Platform::Error::Invalid => e
+        #         options.platforms.clear
+        #         print_error e
+        #         print_info 'Available platforms are:'
+        #         print_info Platform::Manager.new.valid.to_a.join( ', ' )
+        #         print_line
+        #         print_info 'Use the \'--platforms-list\' parameter to see a' <<
+        #                        ' detailed list of all available platforms.'
+        #         exit 1
+        #     end
+        # end
 
         if !options.audit.links? && !options.audit.forms? &&
             !options.audit.cookies? && !options.audit.headers? &&
