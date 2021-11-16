@@ -635,57 +635,57 @@ class OptionParser < UI::CLI::OptionParser
         end
     end
 
-    def browser_cluster
+    def dom
         separator ''
-        separator 'Browser cluster'
+        separator 'DOM'
 
-        on( "--browser-cluster-engine #{options.browser_cluster.class::ENGINES.join( ', ' )}",
+        on( "--dom-engine #{options.dom.class::ENGINES.join( ', ' )}",
             'Browser engine to use.',
-            "(Default: #{options.browser_cluster.engine})"
+            "(Default: #{options.dom.engine})"
         ) do |engine|
-            options.browser_cluster.engine = engine
+            options.dom.engine = engine
         end
 
-        on( '--browser-cluster-local-storage FILE',
+        on( '--dom-local-storage FILE',
             "Sets the browsers' local storage using the JSON data in FILE."
         ) do |file|
-            options.browser_cluster.local_storage = ::JSON.load( IO.read( file ) )
+            options.dom.local_storage = ::JSON.load( IO.read( file ) )
         end
 
-        on( '--browser-cluster-session-storage FILE',
+        on( '--dom-session-storage FILE',
             "Sets the browsers' session storage using the JSON data in FILE."
         ) do |file|
-            options.browser_cluster.session_storage = ::JSON.load( IO.read( file ) )
+            options.dom.session_storage = ::JSON.load( IO.read( file ) )
         end
 
-        on( '--browser-cluster-wait-for-element PATTERN:CSS',
+        on( '--dom-wait-for-element PATTERN:CSS',
             'Wait for element matching CSS to appear when visiting a page whose' <<
             ' URL matches the PATTERN.'
         ) do |rule|
             pattern, css = rule.split( ':', 2 )
-            options.browser_cluster.wait_for_elements[ Regexp.new( pattern ) ] =
+            options.dom.wait_for_elements[ Regexp.new( pattern ) ] =
                 css
         end
 
-        on( '--browser-cluster-pool-size SIZE', Integer,
+        on( '--dom-pool-size SIZE', Integer,
             'Amount of browser workers to keep in the pool and put to work.',
-            "(Default: #{options.browser_cluster.pool_size})"
+            "(Default: #{options.dom.pool_size})"
         ) do |pool_size|
-            options.browser_cluster.pool_size = pool_size
+            options.dom.pool_size = pool_size
         end
 
-        on( '--browser-cluster-job-timeout SECONDS', Integer,
+        on( '--dom-job-timeout SECONDS', Integer,
             'Maximum allowed time for each job.',
-            "(Default: #{options.browser_cluster.job_timeout})"
+            "(Default: #{options.dom.job_timeout})"
         ) do |job_timeout|
-            options.browser_cluster.job_timeout = job_timeout
+            options.dom.job_timeout = job_timeout
         end
 
-        on( '--browser-cluster-worker-time-to-live LIMIT', Integer,
+        on( '--dom-worker-time-to-live LIMIT', Integer,
             'Re-spawn the browser of each worker every LIMIT jobs.',
-            "(Default: #{options.browser_cluster.worker_time_to_live})"
+            "(Default: #{options.dom.worker_time_to_live})"
         ) do |worker_time_to_live|
-            options.browser_cluster.worker_time_to_live = worker_time_to_live
+            options.dom.worker_time_to_live = worker_time_to_live
         end
 
     end

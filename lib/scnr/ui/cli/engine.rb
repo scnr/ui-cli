@@ -132,7 +132,7 @@ class Engine
         statistics = @scan.statistics
 
         http            = statistics[:http]
-        browser_cluster = statistics[:browser_cluster]
+        browser_cluster = statistics[:browser_pool]
 
         refresh_line nil, unmute
         refresh_info( "Audited #{statistics[:audited_pages]} page snapshots.", unmute )
@@ -408,7 +408,7 @@ class Engine
         parser.platforms
         parser.session
         parser.profiles
-        parser.browser_cluster
+        parser.dom
         parser.device
         parser.report
         parser.snapshot
