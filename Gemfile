@@ -4,6 +4,7 @@ gem 'bootsnap', require: false
 
 gem 'rake', '~> 10.0'
 gem 'pry'
+gem 'debug'
 
 group :spec do
     gem 'rspec', '~> 3.0'

@@ -37,24 +37,68 @@ class Engine
         @show_command_screen = nil
         @cleanup_handler     = nil
 
+        # Step into a pry session for debugging.
         if Signal.list.include?( 'USR1' )
-            # Step into a pry session for debugging.
             trap( 'USR1' ) do
+                next if @usr1
+
+                @usr1 = true
+                if @get_user_command_thread
+                    @get_user_command_thread.kill
+                    @get_user_command_thread = nil
+                end
+
+                mute
+                clear_screen
+
                 Thread.new do
                     require 'pry'
-
-                    mute
-                    clear_screen
+                    require 'debug'
 
                     pry
+                    @usr1 = nil
 
                     clear_screen
                     unmute
+                    get_user_command
                 end
             end
         end
 
+        # Print out exactly what's going on on Ruby's side.
+        if Signal.list.include?( 'USR2' )
+            trap( 'USR2' ) do
+                if @get_user_command_thread
+                    @get_user_command_thread.kill
+                    @get_user_command_thread = nil
+                end
+
+                if @usr2
+                    @usr2 = nil
+
+                    set_trace_func( nil )
+
+                    clear_screen
+                    unmute
+                    get_user_command
+                    next
+                end
+
+                @usr2 = true
+
+                mute
+                clear_screen
+
+                set_trace_func proc { |event, file, line, id, binding, classname|
+                    printf "%8s %s:%-2d %10s %8s\n", event, file, line, id, classname
+                }
+            end
+        end
+
         trap( 'INT' ) do
+            @get_user_command_thread.kill
+            @get_user_command_thread = nil
+
             hide_command_screen
             clear_screen
             shutdown
@@ -82,7 +126,7 @@ class Engine
         print_status 'Initializing...'
 
         # Won't work properly on MS Windows or when running in background.
-        get_user_command if !SCNR::Engine.windows? && !@daemon_friendly
+        get_user_command
 
         begin
             # We may need to kill the audit so put it in a thread.
@@ -147,13 +191,13 @@ class Engine
         refresh_info( "Duration: #{seconds_to_hms( statistics[:runtime] )}", unmute )
 
         res_req = "#{statistics[:http][:response_count]}/#{statistics[:http][:request_count]}"
-        refresh_info( "Processed #{res_req} HTTP requests.", unmute )
+        refresh_info( "Processed #{res_req} HTTP requests -- timed-out: #{http[:time_out_count]}", unmute )
 
         avg = "-- #{http[:total_responses_per_second].round(3)} requests/second."
         refresh_info( avg, unmute )
 
         jobs = "#{browser_cluster[:completed_job_count]}/#{browser_cluster[:queued_job_count]}"
-        refresh_info( "Processed #{jobs} browser jobs.", unmute )
+        refresh_info( "Processed #{jobs} browser jobs -- timed-out: #{browser_cluster[:time_out_count]}", unmute )
 
         jobsps = "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
         refresh_info( jobsps, unmute )
@@ -167,7 +211,6 @@ class Engine
         refresh_info( "Burst response count        #{http[:burst_response_count]}", unmute )
         refresh_info( "Burst average response time #{http[:burst_average_response_time].round(3)} seconds", unmute )
         refresh_info( "Burst average               #{http[:burst_responses_per_second].round(3)} requests/second", unmute )
-        refresh_info( "Timed-out requests          #{http[:time_out_count]}", unmute )
         refresh_info( "Original max concurrency    #{options.http.request_concurrency}", unmute )
         refresh_info( "Throttled max concurrency   #{http[:max_concurrency]}", unmute )
 
@@ -248,8 +291,11 @@ class Engine
     end
 
     def get_user_command
-        Thread.new do
+        return if SCNR::Engine.windows? || @daemon_friendly
+
+        @get_user_command_thread ||= Thread.new do
             command = gets.strip
+            @get_user_command_thread = nil
 
             get_user_command
 
