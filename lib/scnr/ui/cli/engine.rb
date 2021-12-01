@@ -41,8 +41,8 @@ class Engine
         if Signal.list.include?( 'USR1' )
             trap( 'USR1' ) do
                 next if @usr1
-
                 @usr1 = true
+
                 if @get_user_command_thread
                     @get_user_command_thread.kill
                     @get_user_command_thread = nil
@@ -56,11 +56,12 @@ class Engine
                     require 'debug'
 
                     pry
-                    @usr1 = nil
 
                     clear_screen
                     unmute
                     get_user_command
+
+                    @usr1 = nil
                 end
             end
         end
@@ -301,7 +302,7 @@ class Engine
 
             # Only accept the empty/toggle-screen command when the command
             # screen is not shown.
-            return if !command_screen_shown? && !command.empty?
+            next if !command_screen_shown? && !command.empty?
 
             case command
 
