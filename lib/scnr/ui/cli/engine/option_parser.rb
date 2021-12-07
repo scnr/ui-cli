@@ -667,6 +667,13 @@ class OptionParser < UI::CLI::OptionParser
                 css
         end
 
+        on( '--dom-wait-for-timers',
+            'Wait for the maximum setTimeout() on each page.',
+            "(Default: #{options.dom.wait_for_timers})"
+        ) do
+            options.dom.wait_for_timers = true
+        end
+
         on( '--dom-pool-size SIZE', Integer,
             'Amount of browser workers to keep in the pool and put to work.',
             "(Default: #{options.dom.pool_size})"
