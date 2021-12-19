@@ -739,6 +739,24 @@ class OptionParser < UI::CLI::OptionParser
         end
     end
 
+    def script
+        separator ''
+        separator 'Script'
+
+        on( '--script PATH', String,
+            'Script to load.',
+            'Useful for running arbitrary code prior to the scan or loading a DSL API script.',
+            'Can be used multiple times.'
+        ) do |script|
+            if !File.exist? script
+                print_bad "Script '#{script}' does not exist."
+                exit 1
+            end
+
+            load script
+        end
+    end
+
     def timeout
         separator ''
         separator 'Timeout'
