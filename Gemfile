@@ -24,6 +24,7 @@ end
 
 gem 'nokogiri', github: 'sparklemotion/nokogiri'
 gem 'ethon',      path: '../../../ethon'
+gem 'arachni-reactor',      path: '../../../arachni-reactor'
 
 gem 'scnr-engine', path: '../engine'
 gem 'cuboid',      path: '../../../qadron/cuboid'
