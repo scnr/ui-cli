@@ -164,7 +164,7 @@ class Engine
             exit 1
         rescue SCNR::Engine::Error => e
             print_error e
-            print_info "Run scnr_engine with the '-h' parameter for help."
+            print_info "Run with the '-h' parameter for help."
             print_line
             exit 1
         rescue Exception => e
@@ -461,6 +461,7 @@ class Engine
         parser.snapshot
         parser.timeout
         parser.system
+        parser.script
         parser.parse
 
         @daemon_friendly = parser.daemon_friendly?
