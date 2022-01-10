@@ -28,6 +28,8 @@ gem 'ethon',    github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-clean
 gem 'cuboid',   github: 'qadron/cuboid'
 gem 'dsel',     github: 'qadron/dsel'
 
-gem 'scnr-engine', path: '../engine'
+if File.exist? '../engine'
+    gem 'scnr-engine', path: '../engine'
+end
 
 gemspec
