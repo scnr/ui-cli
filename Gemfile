@@ -23,14 +23,11 @@ group :prof do
 end
 
 gem 'nokogiri', github: 'sparklemotion/nokogiri'
-gem 'ethon',      path: '../../../ethon'
-gem 'arachni-reactor',      path: '../../../arachni-reactor'
+gem 'ethon',    github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
+
+gem 'cuboid',   github: 'qadron/cuboid'
+gem 'dsel',     github: 'qadron/dsel'
 
 gem 'scnr-engine', path: '../engine'
-gem 'cuboid',      path: '../../../qadron/cuboid'
-gem 'dsel',      path: '../../../qadron/dsel'
-
-# gem 'ethon',       github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
-# gem 'typhoeus',    github: 'typhoeus/typhoeus'
 
 gemspec
