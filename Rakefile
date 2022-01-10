@@ -21,3 +21,17 @@ namespace :processes  do
         puts `killall -9 ruby; killall geckodriver; killall chromedriver; killall chrome`
     end
 end
+
+namespace :version do
+    task :interface do
+        puts SCNR::UI::CLI::VERSION
+    end
+
+    task :engine do
+        puts SCNR::Engine::VERSION
+    end
+
+    task :full do
+        puts "#{SCNR::Engine::VERSION}-#{SCNR::UI::CLI::VERSION}"
+    end
+end
