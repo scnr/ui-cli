@@ -198,7 +198,7 @@ module Output
         end
 
         sprintf(
-            '%7.4f | %8.4f | ',
+            '%7.1f | %8.1f | ',
             rss_to_mb( @rss - @lrss ),
             rss_to_mb( @rss )
         ) + message.to_s
@@ -207,7 +207,7 @@ module Output
     end
 
     def rss_to_mb( rss )
-        rss * 4096.0 / 1024.0 / 1024.0
+        ( rss * 4096.0 / 1024.0 / 1024.0 ).round( 1 )
     end
 
     # @return   [Bool]
