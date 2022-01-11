@@ -10,7 +10,7 @@ module SCNR
 module UI
 module CLI
 
-    VERSION = '1.0dev'
+    VERSION = IO.read( File.dirname( __FILE__ ) + '/version' ).strip
 
 end
 end
