@@ -11,7 +11,6 @@ require_relative 'dispatcher_monitor/option_parser'
 
 module SCNR
 
-require 'scnr/engine/rpc/client/dispatcher'
 require 'scnr/ui/cli/utilities'
 
 module UI::CLI
@@ -36,10 +35,10 @@ class DispatcherMonitor
 
         begin
             # start the RPC client
-            @dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( options.dispatcher.url )
+            @dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( Cuboid::Options.dispatcher.url )
             @dispatcher.alive?
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not connect to Dispatcher at '#{options.url}'."
+            print_error "Could not connect to Dispatcher at '#{Cuboid::Options.url}'."
             print_error "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1

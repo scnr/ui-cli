@@ -6,13 +6,15 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative '../remote/option_parser'
+require_relative '../../remote/option_parser'
 
 module SCNR
 module UI::CLI
+
 module RPC
 module Client
-class Unplug
+module Scheduler
+class Clear
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::OptionParser
@@ -41,21 +43,19 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        Cuboid::Options.dispatcher.url = ARGV.shift
+        Cuboid::Options.scheduler.url = ARGV.shift
     end
 
     def validate
-        if !Cuboid::Options.dispatcher.url
-            print_error "Missing 'DISPATCHER_URL'."
+        if !Cuboid::Options.scheduler.url
+            print_error "Missing 'scheduler_URL'."
             exit 1
         end
 
         begin
-            SCNR::Engine::RPC::Client::Dispatcher.new(
-              Cuboid::Options.dispatcher.url
-            ).alive?
+            SCNR::Engine::RPC::Client::Scheduler.new( Cuboid::Options.scheduler.url ).alive?
         rescue => e
-            print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
+            print_error "Could not reach Scheduler at: #{Cuboid::Options.scheduler.url}"
             print_error "#{e.class}: #{e.to_s}"
             exit 1
         end
@@ -64,8 +64,10 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def banner
-        "Usage: #{$0} DISPATCHER_URL"
+        "Usage: #{$0} [options] scheduler_URL"
     end
+
+end
 
 end
 end

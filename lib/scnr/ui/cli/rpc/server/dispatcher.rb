@@ -22,13 +22,7 @@ class Dispatcher
     def initialize
         OptionParser.new.parse
 
-        require 'scnr/engine/rpc/server/dispatcher'
-
-        Arachni::Reactor.global.run_in_thread if !Arachni::Reactor.global.running?
-        Arachni::Reactor.global.schedule do
-            Engine::RPC::Server::Dispatcher.new
-        end
-        Arachni::Reactor.global.wait
+        SCNR::Application.spawn( :dispatcher )
     end
 
 end

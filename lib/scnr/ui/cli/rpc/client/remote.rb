@@ -11,8 +11,6 @@ require_relative 'instance'
 
 module SCNR
 
-require 'scnr/engine/rpc/client/dispatcher'
-require 'scnr/engine/rpc/client/instance'
 require 'scnr/ui/cli/utilities'
 
 module UI::CLI
@@ -37,7 +35,7 @@ class Remote
         parser.platforms
         parser.session
         parser.profiles
-        parser.browser_cluster
+        parser.dom
         parser.device
         parser.grid
         parser.ssl
@@ -49,11 +47,11 @@ class Remote
 
         begin
             dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new(
-                options.dispatcher.url
+              Cuboid::Options.dispatcher.url
             )
 
             # Get a new instance and assign the url we're going to audit as the 'owner'.
-            instance_info = dispatcher.dispatch( options.url )
+            instance_info = dispatcher.dispatch( owner: options.url )
 
             if !instance_info
                 print_info 'Dispatcher is at maximum utilization, please try again later.'
@@ -61,7 +59,7 @@ class Remote
             end
 
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not connect to Dispatcher at '#{options.dispatcher.url}'."
+            print_error "Could not connect to Dispatcher at '#{Cuboid::Options.dispatcher.url}'."
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1

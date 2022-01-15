@@ -6,16 +6,21 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative '../remote/option_parser'
+require_relative '../../remote/option_parser'
 
 module SCNR
 module UI::CLI
+
 module RPC
 module Client
-class Unplug
+module Scheduler
+class Attach
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::OptionParser
+
+    attr_reader :url
+    attr_reader :token
 
     def ssl
         separator ''
@@ -41,21 +46,30 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        Cuboid::Options.dispatcher.url = ARGV.shift
+        Cuboid::Options.scheduler.url = ARGV.shift
+        @url, @token      = ARGV.shift.to_s.split( '/' )
     end
 
     def validate
-        if !Cuboid::Options.dispatcher.url
-            print_error "Missing 'DISPATCHER_URL'."
+        if !Cuboid::Options.scheduler.url
+            print_error "Missing 'scheduler_URL'."
+            exit 1
+        end
+
+        if @url.to_s.empty?
+            print_error 'Missing SCAN_URL.'
+            exit 1
+        end
+
+        if @token.to_s.empty?
+            print_error 'Missing scan SCAN_TOKEN.'
             exit 1
         end
 
         begin
-            SCNR::Engine::RPC::Client::Dispatcher.new(
-              Cuboid::Options.dispatcher.url
-            ).alive?
+            SCNR::Engine::RPC::Client::Scheduler.new( Cuboid::Options.scheduler.url ).alive?
         rescue => e
-            print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
+            print_error "Could not reach Scheduler at: #{Cuboid::Options.scheduler.url}"
             print_error "#{e.class}: #{e.to_s}"
             exit 1
         end
@@ -64,8 +78,10 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def banner
-        "Usage: #{$0} DISPATCHER_URL"
+        "Usage: #{$0} [options] scheduler_URL SCAN_URL/SCAN_TOKEN"
     end
+
+end
 
 end
 end

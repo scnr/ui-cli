@@ -6,27 +6,28 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative 'server/option_parser'
+require_relative 'scheduler/option_parser'
 
 module SCNR
 
-require_relative '../utilities'
+require 'scnr/ui/cli/utilities'
 
 module UI::CLI
-module Rest
+module RPC
+module Server
 
-# @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
-class Server
+# @author Tasos "Zapotek" Laskos<tasos.laskos@gmail.com>
+class Scheduler
 
     def initialize
-        parser = OptionParser.new
-        parser.parse
+        OptionParser.new.parse
 
-        SCNR::Application.spawn( :rest )
+        SCNR::Application.spawn( :scheduler )
     end
 
 end
 
+end
 end
 end
 end

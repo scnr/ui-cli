@@ -6,7 +6,6 @@
     web site for more information on licensing and terms of use.
 =end
 
-require 'scnr/engine/api'
 require_relative 'system_info'
 require_relative 'engine/option_parser'
 require_relative 'utilities'
@@ -26,7 +25,8 @@ class Engine
 
     # Initializes the command line interface and the {Framework}.
     def initialize
-        @scan = SCNR::Engine::API.new.scan
+        @application = SCNR::Application.unsafe
+        @scan        = @application.api.scan
 
         parse_options
         ensure_available_slots
@@ -403,7 +403,7 @@ class Engine
         print_status 'Aborting...'
         print_info 'Please wait while the system cleans up.'
 
-        killed = Queue.new
+        killed = Scheduler.new
         @cleanup_handler = Thread.new do
             exception_jail do
                 killed.pop

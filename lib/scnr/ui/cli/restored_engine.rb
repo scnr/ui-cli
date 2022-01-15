@@ -57,8 +57,8 @@ class RestoredEngine < Engine
         print_info 'Framework'
         framework = data[:engine]
         print_info "  Sitemap size:    #{framework[:sitemap]}"
-        print_info "  Page queue size: #{framework[:page_queue]}"
-        print_info "  URL queue size:  #{framework[:url_queue]}"
+        print_info "  Page scheduler size: #{framework[:page_queue]}"
+        print_info "  URL scheduler size:  #{framework[:url_queue]}"
 
         print_line
 

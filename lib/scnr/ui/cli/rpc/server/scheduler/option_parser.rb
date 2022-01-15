@@ -13,7 +13,7 @@ module SCNR
 module UI::CLI
 module RPC
 module Server
-class Dispatcher
+class Scheduler
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::OptionParser
@@ -25,20 +25,15 @@ class OptionParser < UI::CLI::OptionParser
 
         separator 'Server'
 
-        on( '--name NAME', 'Name for this Dispatcher.' ) do |name|
-            Cuboid::Options.dispatcher.name = name
-        end
-
         on( '--address ADDRESS', 'Hostname or IP address to bind to.',
-               "(Default: #{Cuboid::Options.rpc.server_address})"
         ) do |address|
-            options.rpc.server_address = address
+            Cuboid::Options.rpc.server_address = address
         end
 
         on( '--external-address ADDRESS', 'Hostname or IP address to advertise.',
                "(Default: #{Cuboid::Options.rpc.server_address})"
         ) do |address|
-            Cuboid::Options.rpc.server_external_address = address
+            options.dispatcher.external_address = address
         end
 
         on( '--port NUMBER', 'Port to listen to.', Integer,
@@ -57,15 +52,15 @@ class OptionParser < UI::CLI::OptionParser
         separator ''
         separator 'Grid'
 
-        on( '--neighbour URL', 'URL of a neighbouring Dispatcher.' ) do |url|
-            Cuboid::Options.dispatcher.neighbour = url
+        on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
+            Cuboid::Options.dispatcher.url = url
         end
 
         separator ''
         separator 'Output'
 
         on( '--output-reroute-to-logfile',
-               "Reroute all output to log-files under: #{options.paths.logs}"
+            "Reroute scan output to log-files under: #{options.paths.logs}"
         ) do
             options.output.reroute_to_logfile = true
         end
@@ -122,13 +117,25 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         separator ''
+        separator 'Report'
+
+        on( '--report-save-path DIRECTORY', String,
+            'Directory where to store the scan reports.',
+            'You can use the generated files to create reports in several ' +
+                "formats with the 'scnr_reporter' executable.",
+            "(Default: #{options.paths.reports})"
+        ) do |path|
+            options.report.path = path
+        end
+
+        separator ''
         separator 'Snapshot'
 
         on( '--snapshot-save-path DIRECTORY', String,
             'Directory under which to store snapshots of suspended scans.',
-            "(Default: #{Cuboid::Options.paths.snapshots})"
+            "(Default: #{options.paths.snapshots})"
         ) do |path|
-            Cuboid::Options.snapshot.path = path
+            options.snapshot.path = path
         end
 
         separator ''
@@ -136,20 +143,21 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--system-max-slots SLOTS', Integer,
             'Maximum amount of Instances to be alive at any given time.',
+            'Only applicable when no Dispatcher has been provided.',
             '(Default: auto)'
         ) do |max_slots|
-            Cuboid::Options.system.max_slots = max_slots
+            options.system.max_slots = max_slots
         end
     end
 
     def validate
-        if Cuboid::Options.dispatcher.neighbour
+        if Cuboid::Options.dispatcher.url
             begin
                 SCNR::Engine::RPC::Client::Dispatcher.new(
-                  Cuboid::Options.dispatcher.neighbour
+                    Cuboid::Options.dispatcher.url
                 ).alive?
             rescue => e
-                print_error "Could not reach neighbour at: #{Cuboid::Options.dispatcher.neighbour}"
+                print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end

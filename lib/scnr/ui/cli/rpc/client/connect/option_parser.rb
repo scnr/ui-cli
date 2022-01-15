@@ -6,8 +6,6 @@
     web site for more information on licensing and terms of use.
 =end
 
-require 'scnr/engine/rpc/client'
-
 require_relative '../../../engine/option_parser'
 
 module SCNR

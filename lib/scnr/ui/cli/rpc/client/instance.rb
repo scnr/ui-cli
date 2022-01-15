@@ -8,7 +8,6 @@
 
 module SCNR
 
-require 'scnr/engine/rpc/client/instance'
 require 'scnr/ui/cli/mixins/terminal'
 require 'scnr/ui/cli/utilities'
 
@@ -62,7 +61,7 @@ class Instance
             # We may be re-attaching, don't call scan again.
             if @instance.status == :ready
                 # Start the show!
-                @instance.scan prepare_rpc_options
+                @instance.run prepare_rpc_options
             end
 
             while busy?
@@ -71,7 +70,7 @@ class Instance
                 refresh_progress
             end
 
-            if !queue_url
+            if !scheduler_url
                 report_and_shutdown
             end
         rescue Interrupt
@@ -93,8 +92,8 @@ class Instance
         print_line
         print_status "#{@instance.url}/#{@instance.token}"
 
-        if queue_url
-            print_info "Queue:      #{queue_url}"
+        if scheduler_url
+            print_info "Scheduler:      #{scheduler_url}"
         end
 
         if dispatcher_url
@@ -127,7 +126,7 @@ class Instance
                 'g'     => 'generate a report'
             }.each do |key, action|
                 next if %w(Enter s p).include?( key ) && !scanning?
-                next if %w(a s).include?( key ) && queue_url
+                next if %w(a s).include?( key ) && scheduler_url
                 next if key == 'r' && !(paused? || pausing?)
 
                 print_info "  '#{key}' to #{action}."
@@ -149,12 +148,12 @@ class Instance
 
     %w(paused pausing suspended suspending scanning aborting).each do |s|
         define_method "#{s}?" do
-            status == s.to_sym
+            status == s
         end
     end
 
-    def queue_url
-        @progress[:queue_url]
+    def scheduler_url
+        @progress[:scheduler_url]
     end
 
     def dispatcher_url
@@ -162,6 +161,8 @@ class Instance
     end
 
     def get_user_command
+        Thread.report_on_exception = true
+
         Thread.new do
             command = gets.strip
 
@@ -171,24 +172,22 @@ class Instance
 
                 # Abort
                 when 'a'
-                    return if queue_url
-                    @abort = true
+                    return if scheduler_url
+                    @instance.abort!
 
                 # Pause
                 when 'p'
-                    return if !scanning?
-
-                    @pause_id = @instance.pause
+                    @instance.pause!
 
                 # Resume
                 when 'r'
-                    return if !paused?
-                    @instance.resume
+                    next if !paused?
+                    @instance.resume!
 
                 # Suspend
                 when 's'
-                    return if !scanning? || queue_url
-                    @instance.suspend
+                    next if !scanning? || scheduler_url
+                    @instance.suspend!
 
                 # Generate reports.
                 when 'g'
@@ -216,21 +215,22 @@ class Instance
             @error_messages_cnt ||= 0
             @issue_digests      ||= []
 
-            progress = @instance.native_progress(
+            progress = @instance.scan.progress(
                 with:    [ :instances, :issues, errors: @error_messages_cnt ],
                 without: [ issues: @issue_digests ]
             )
 
             return if !progress
 
-            @progress = progress
-            @issues  |= @progress[:issues]
+            @progress = progress.my_symbolize_keys
+            issues    = @progress[:issues].map { |i| SCNR::Engine::Issue.from_rpc_data i }
+            @issues  |= issues
 
             @issues = @issues.sort_by(&:digest).sort_by(&:severity).reverse
 
             # Keep issue digests and error messages in order to ask not to retrieve
             # them on subsequent progress calls in order to save bandwidth.
-            @issue_digests  |= @progress[:issues].map( &:digest )
+            @issue_digests  |= issues.map( &:digest )
 
             if @progress[:errors].any?
                 error_log_file = @instance.url.gsub( ':', '_' )
@@ -246,7 +246,7 @@ class Instance
     end
 
     def busy?
-        !aborting? && !!progress[:busy]
+        progress[:running] || progress[:status] == 'ready'
     end
 
     # Laconically output the discovered issues.
@@ -294,7 +294,7 @@ class Instance
     def report_and_shutdown
         print_status 'Shutting down and retrieving the report, please wait...'
 
-        generate_reports( true )
+        generate_reports
 
         print_line
         print_info "Report saved at:   #{@report_filepath} [#{@report_filesize}MB]"
@@ -303,23 +303,26 @@ class Instance
             print_info "Snapshot saved at: #{@instance.snapshot_path}"
         end
 
-        shutdown
-
         print_line
         print_statistics
         print_line
+    rescue => e
+        ap e
+    ensure
+        shutdown
     end
 
-    def generate_reports( abort = false )
-        if abort
-            report = @instance.native_abort_and_report
-            @framework.reporters.run :stdout, report
-        else
-            report = @instance.native_report
-        end
+    def generate_reports
+        report = @instance.generate_report.data
+
+        @framework.reporters.run :stdout, report
 
         @report_filepath = report.save( @options.report.path )
         @report_filesize = (File.size( @report_filepath ).to_f / 2**20).round(2)
+
+    rescue => e
+        print_error "Could not generate report: #{e}"
+        print_error_backtrace e
     end
 
     def shutdown
@@ -331,7 +334,6 @@ class Instance
     end
 
     def status
-        return :aborting if @abort
         progress[:status]
     end
 
@@ -345,7 +347,7 @@ class Instance
         print_info "Sent #{http[:request_count]} requests."
         print_info "Received and analyzed #{http[:response_count]} responses."
         print_info( "In #{seconds_to_hms( statistics[:runtime] )}" )
-        print_info "Average: #{http[:total_responses_per_second]} requests/second."
+        print_info "Average: #{http[:total_responses_per_second].round(2)} requests/second."
 
         print_line
         if statistics[:current_pages]
@@ -366,10 +368,10 @@ class Instance
             print_info "Currently auditing           #{statistics[:current_page]}"
         end
 
-        print_info "Burst response time sum      #{http[:burst_response_time_sum]} seconds"
+        print_info "Burst response time sum      #{http[:burst_response_time_sum].round(2)} seconds"
         print_info "Burst response count total   #{http[:burst_response_count]}"
-        print_info "Burst average response time  #{http[:burst_average_response_time]} seconds"
-        print_info "Burst average                #{http[:burst_responses_per_second]} requests/second"
+        print_info "Burst average response time  #{http[:burst_average_response_time].round(2)} seconds"
+        print_info "Burst average                #{http[:burst_responses_per_second].round(2)} requests/second"
         print_info "Timed-out requests           #{http[:time_out_count]}"
         print_info "Original max concurrency     #{@options.http.request_concurrency}"
         print_info "Throttled max concurrency    #{http[:max_concurrency]}"

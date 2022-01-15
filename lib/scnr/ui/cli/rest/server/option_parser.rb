@@ -27,29 +27,29 @@ class OptionParser < UI::CLI::OptionParser
         separator 'Server'
 
         on( '--address ADDRESS', 'Hostname or IP address to bind to.',
-            "(Default: #{options.rpc.server_address})"
+            "(Default: #{Cuboid::Options.rpc.server_address})"
         ) do |address|
-            options.rpc.server_address = address
+            Cuboid::Options.rpc.server_address = address
         end
 
         on( '--port NUMBER', 'Port to listen to.', Integer,
-            "(Default: #{options.rpc.server_port})"
+            "(Default: #{Cuboid::Options.rpc.server_port})"
         ) do |port|
-            options.rpc.server_port = port
+            Cuboid::Options.rpc.server_port = port
         end
 
         separator ''
         separator 'Grid'
 
         on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
-            options.dispatcher.url = url
+            Cuboid::Options.dispatcher.url = url
         end
 
         separator ''
-        separator 'Queue'
+        separator 'Scheduler'
 
-        on( '--queue-url HOST:PORT', 'Queue to use.' ) do |url|
-            options.queue.url = url
+        on( '--scheduler-url HOST:PORT', 'Scheduler to use.' ) do |url|
+            Cuboid::Options.scheduler.url = url
         end
 
         separator ''
@@ -104,31 +104,31 @@ class OptionParser < UI::CLI::OptionParser
                 'If provided, peer verification will be enabled, otherwise no' +
                     ' verification will take place.'
             ) do |file|
-                options.rpc.ssl_ca = file
+                Cuboid::Options.rpc.ssl_ca = file
             end
 
             on( '--server-ssl-private-key FILE',
                 'Location of the SSL private key (.pem).'
             ) do |file|
-                options.rpc.server_ssl_private_key = file
+                Cuboid::Options.rpc.server_ssl_private_key = file
             end
 
             on( '--server-ssl-certificate FILE',
                 'Location of the SSL certificate (.pem).'
             ) do |file|
-                options.rpc.server_ssl_certificate = file
+                Cuboid::Options.rpc.server_ssl_certificate = file
             end
 
             on( '--client-ssl-private-key FILE',
                 'Location of the client SSL private key (.pem).'
             ) do |file|
-                options.rpc.client_ssl_private_key = file
+                Cuboid::Options.rpc.client_ssl_private_key = file
             end
 
             on( '--client-ssl-certificate FILE',
                 'Location of the client SSL certificate (.pem).'
             ) do |file|
-                options.rpc.client_ssl_certificate = file
+                Cuboid::Options.rpc.client_ssl_certificate = file
             end
         end
 
@@ -140,30 +140,30 @@ class OptionParser < UI::CLI::OptionParser
             'Only applicable when no Dispatcher has been provided.',
             '(Default: auto)'
         ) do |max_slots|
-            options.system.max_slots = max_slots
+            Cuboid::Options.system.max_slots = max_slots
         end
     end
 
     def validate
-        if options.dispatcher.url
+        if Cuboid::Options.dispatcher.url
             begin
                 SCNR::Engine::RPC::Client::Dispatcher.new(
-                    options.dispatcher.url
+                    Cuboid::Options.dispatcher.url
                 ).alive?
             rescue => e
-                print_error "Could not reach Dispatcher at: #{options.dispatcher.url}"
+                print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end
         end
 
-        if options.queue.url
+        if Cuboid::Options.scheduler.url
             begin
-                SCNR::Engine::RPC::Client::Queue.new(
-                    options.queue.url
+                SCNR::Engine::RPC::Client::Scheduler.new(
+                    Cuboid::Options.scheduler.url
                 ).alive?
             rescue => e
-                print_error "Could not reach Queue at: #{options.queue.url}"
+                print_error "Could not reach Scheduler at: #{Cuboid::Options.scheduler.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end

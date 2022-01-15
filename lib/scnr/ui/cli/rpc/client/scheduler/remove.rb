@@ -6,8 +6,7 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative 'connect/option_parser'
-require_relative 'instance'
+require_relative 'remove/option_parser'
 
 module SCNR
 
@@ -15,36 +14,39 @@ require 'scnr/ui/cli/utilities'
 
 module UI::CLI
 module RPC::Client
+module Scheduler
 
-# @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
-class Connect
+class Remove
     include Output
 
     def initialize
-        parser = Connect::OptionParser.new
-        parser.ssl
+        parser = Remove::OptionParser.new
         parser.parse
 
-        instance = nil
+        options = parser.options
+
         begin
-            instance = SCNR::Engine::RPC::Client::Instance.new(
-                parser.url,
-                parser.token
-            )
-            instance.alive?
+            @scheduler = SCNR::Engine::RPC::Client::Scheduler.new( Cuboid::Options.scheduler.url )
+
+            parser.ids.each do |id|
+                if @scheduler.remove( id )
+                    print_ok "Removed: #{id}"
+                else
+                    print_bad "Scan not in scheduler: #{id}"
+                end
+            end
+
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error 'Could not connect to Instance.'
+            print_error "Could not remove from Scheduler at '#{Cuboid::Options.scheduler.url}'."
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1
         end
-
-        # Let the Instance UI manage the Instance from now on.
-        Instance.new( instance ).run
     end
 
 end
 
+end
 end
 end
 end

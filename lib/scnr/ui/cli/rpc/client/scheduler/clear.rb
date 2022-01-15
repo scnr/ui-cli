@@ -6,42 +6,40 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative 'unplug/option_parser'
+require_relative 'clear/option_parser'
 
 module SCNR
 
-require 'scnr/engine/rpc/client/dispatcher'
+require 'scnr/ui/cli/utilities'
 
 module UI::CLI
 module RPC::Client
+module Scheduler
 
-class Unplug
+class Clear
     include Output
-    include Utilities
 
     def initialize
-        parser = Unplug::OptionParser.new
-        parser.ssl
+        parser = Clear::OptionParser.new
         parser.parse
 
         options = parser.options
 
         begin
-            @dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( Cuboid::Options.dispatcher.url )
-            @dispatcher.node.unplug
+            SCNR::Engine::RPC::Client::Scheduler.new( Cuboid::Options.scheduler.url ).clear
 
-            print_ok "Unplugged #{Cuboid::Options.dispatcher.url}."
+            print_ok 'Scheduler cleared.'
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not connect to Dispatcher at '#{options.url}'."
-            print_error "Error: #{e.to_s}."
+            print_error "Could not clear Scheduler at '#{Cuboid::Options.scheduler.url}'."
+            print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1
         end
-
     end
 
 end
 
+end
 end
 end
 end

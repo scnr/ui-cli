@@ -335,8 +335,8 @@ class OptionParser < UI::CLI::OptionParser
             options.http.request_redirect_limit = limit
         end
 
-        on( '--http-request-queue-size QUEUE_SIZE', Integer,
-               'Maximum amount of requests to keep in the queue.',
+        on( '--http-request-scheduler-size scheduler_SIZE', Integer,
+               'Maximum amount of requests to keep in the scheduler.',
                'Bigger size means better scheduling and better performance,',
                'smaller means less RAM consumption.',
                "(Default: #{options.http.request_queue_size})"

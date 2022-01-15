@@ -32,4 +32,5 @@ Gem::Specification.new do |s|
     s.add_dependency 'terminal-table', '1.4.5'
 
     s.add_dependency 'scnr-engine',    '~> 1.0dev'
+    s.add_dependency 'scnr-application'
 end

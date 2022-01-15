@@ -25,8 +25,13 @@ end
 gem 'nokogiri', github: 'sparklemotion/nokogiri'
 gem 'ethon',    github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 
-gem 'cuboid',   github: 'qadron/cuboid'
-gem 'dsel',     github: 'qadron/dsel'
+if File.exist? '../../../qadron/cuboid'
+    gem 'cuboid', path: '../../../qadron/cuboid'
+end
+
+if File.exist? '../application'
+    gem 'scnr-application', path: '../application'
+end
 
 if File.exist? '../engine'
     gem 'scnr-engine', path: '../engine'

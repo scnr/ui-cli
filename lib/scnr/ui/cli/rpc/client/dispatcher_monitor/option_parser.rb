@@ -18,12 +18,12 @@ class DispatcherMonitor
 class OptionParser < Client::Remote::OptionParser
 
     def after_parse
-        options.dispatcher.url = ARGV.shift
+        Cuboid::Options.dispatcher.url = ARGV.shift
     end
 
     def validate
         # Check for missing Dispatcher
-        return if options.dispatcher.url
+        return if Cuboid::Options.dispatcher.url
 
         print_error 'Missing DISPATCHER_URL option.'
         exit 1

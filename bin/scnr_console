@@ -28,10 +28,10 @@ begin
     histfile = File.expand_path( HISTFILE )
     if File.exists?( histfile )
         lines = IO.readlines( histfile ).map { |line| line.chomp }
-        Readline::HISTORY.push( *lines )
+        Reline::HISTORY.push( *lines )
     end
     Kernel.at_exit do
-        lines = Readline::HISTORY.to_a.reverse.uniq.reverse
+        lines = Reline::HISTORY.to_a.reverse.uniq.reverse
         lines = lines[-MAXHISTSIZE, MAXHISTSIZE] if lines.size > MAXHISTSIZE
         File.open( histfile, 'a' ) { |f| f.write( lines.join( "\n" ) ) }
     end
