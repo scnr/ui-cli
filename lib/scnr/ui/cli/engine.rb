@@ -403,7 +403,7 @@ class Engine
         print_status 'Aborting...'
         print_info 'Please wait while the system cleans up.'
 
-        killed = Scheduler.new
+        killed = Queue.new
         @cleanup_handler = Thread.new do
             exception_jail do
                 killed.pop
