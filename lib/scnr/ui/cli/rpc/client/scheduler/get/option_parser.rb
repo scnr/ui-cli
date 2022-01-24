@@ -78,7 +78,7 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def banner
-        "Usage: #{$0} [options] scheduler_URL SCAN_ID1 SCAN_ID2 .."
+        "Usage: #{$0} [options] SCHEDULER_URL SCAN_ID1 SCAN_ID2 .."
     end
 
 end

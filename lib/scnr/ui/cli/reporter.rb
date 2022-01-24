@@ -36,7 +36,12 @@ class Reporter
 
         errors = false
         begin
-            report = Engine::Report.load( SCNR::Engine::Options.report.path )
+
+            report = begin
+                Engine::Report.load( SCNR::Engine::Options.report.path )
+            rescue
+                Cuboid::Report.load( SCNR::Engine::Options.report.path ).data
+            end
 
             reporters.each do |name, options|
                 @reporters.run( name, report, options, true )

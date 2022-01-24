@@ -32,7 +32,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--address ADDRESS', 'Hostname or IP address to bind to.',
                "(Default: #{Cuboid::Options.rpc.server_address})"
         ) do |address|
-            options.rpc.server_address = address
+            Cuboid::Options.rpc.server_address = address
         end
 
         on( '--external-address ADDRESS', 'Hostname or IP address to advertise.',

@@ -33,7 +33,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--external-address ADDRESS', 'Hostname or IP address to advertise.',
                "(Default: #{Cuboid::Options.rpc.server_address})"
         ) do |address|
-            options.dispatcher.external_address = address
+            options.rpc.external_address = address
         end
 
         on( '--port NUMBER', 'Port to listen to.', Integer,

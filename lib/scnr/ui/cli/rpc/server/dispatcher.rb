@@ -22,7 +22,25 @@ class Dispatcher
     def initialize
         OptionParser.new.parse
 
-        SCNR::Application.spawn( :dispatcher )
+        SCNR::Application.spawn(
+            :dispatcher,
+            port:               Cuboid::Options.rpc.server_port,
+            address:            Cuboid::Options.rpc.server_address,
+            external_address:   Cuboid::Options.rpc.server_external_address,
+            neighbour:          Cuboid::Options.dispatcher.neighbour,
+
+            ssl:                {
+                ca:       Cuboid::Options.rpc.ssl_ca,
+                server:   {
+                    private_key:    Cuboid::Options.rpc.server_ssl_private_key,
+                    certificate:    Cuboid::Options.rpc.server_ssl_certificate
+                },
+                client:   {
+                    private_key:    Cuboid::Options.rpc.client_ssl_private_key,
+                    certificate:    Cuboid::Options.rpc.client_ssl_certificate
+                }
+            }
+        )
     end
 
 end
