@@ -24,10 +24,14 @@ class Dispatcher
 
         SCNR::Application.spawn(
             :dispatcher,
+
+            name:               Cuboid::Options.dispatcher.name,
+            strategy:           Cuboid::Options.dispatcher.strategy,
+            neighbour:          Cuboid::Options.dispatcher.neighbour,
+
             port:               Cuboid::Options.rpc.server_port,
             address:            Cuboid::Options.rpc.server_address,
             external_address:   Cuboid::Options.rpc.server_external_address,
-            neighbour:          Cuboid::Options.dispatcher.neighbour,
 
             ssl:                {
                 ca:       Cuboid::Options.rpc.ssl_ca,

@@ -24,10 +24,13 @@ class Scheduler
 
         SCNR::Application.spawn(
           :scheduler,
+
+          dispatcher:         Cuboid::Options.dispatcher.url,
+          strategy:           Cuboid::Options.dispatcher.strategy,
+
           port:               Cuboid::Options.rpc.server_port,
           address:            Cuboid::Options.rpc.server_address,
           external_address:   Cuboid::Options.rpc.server_external_address,
-          dispatcher:         Cuboid::Options.dispatcher.url,
 
           ssl:                {
             ca:       Cuboid::Options.rpc.ssl_ca,

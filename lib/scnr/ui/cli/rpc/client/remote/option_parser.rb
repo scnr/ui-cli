@@ -24,6 +24,13 @@ class OptionParser < UI::CLI::Engine::OptionParser
         on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
             Cuboid::Options.dispatcher.url = url
         end
+
+        on( '--dispatcher-strategy STRATEGY', 'Default distribution strategy.',
+            "(Available: #{Cuboid::OptionGroups::Dispatcher::STRATEGIES.join( ', ')})",
+            "(Default: #{Cuboid::Options.dispatcher.strategy})"
+        ) do |strategy|
+            Cuboid::Options.dispatcher.strategy = strategy
+        end
     end
 
     def ssl

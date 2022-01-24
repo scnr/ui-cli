@@ -61,6 +61,13 @@ class OptionParser < UI::CLI::OptionParser
             Cuboid::Options.dispatcher.neighbour = url
         end
 
+        on( '--strategy STRATEGY', 'Default distribution strategy.',
+            "(Available: #{Cuboid::OptionGroups::Dispatcher::STRATEGIES.join( ', ')})",
+            "(Default: #{Cuboid::Options.dispatcher.strategy})"
+        ) do |name|
+            Cuboid::Options.dispatcher.strategy = strategy
+        end
+
         separator ''
         separator 'Output'
 
