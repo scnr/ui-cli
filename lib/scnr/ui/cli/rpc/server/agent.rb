@@ -6,7 +6,7 @@
     web site for more information on licensing and terms of use.
 =end
 
-require_relative 'dispatcher/option_parser'
+require_relative 'agent/option_parser'
 
 module SCNR
 
@@ -17,17 +17,17 @@ module RPC
 module Server
 
 # @author Tasos "Zapotek" Laskos<tasos.laskos@gmail.com>
-class Dispatcher
+class Agent
 
     def initialize
         OptionParser.new.parse
 
         SCNR::Application.spawn(
-            :dispatcher,
+            :agent,
 
-            name:               Cuboid::Options.dispatcher.name,
-            strategy:           Cuboid::Options.dispatcher.strategy,
-            neighbour:          Cuboid::Options.dispatcher.neighbour,
+            name:     Cuboid::Options.agent.name,
+            strategy: Cuboid::Options.agent.strategy,
+            peer:     Cuboid::Options.agent.peer,
 
             port:               Cuboid::Options.rpc.server_port,
             address:            Cuboid::Options.rpc.server_address,

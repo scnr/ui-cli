@@ -8,6 +8,6 @@
 =end
 
 require 'scnr/ui/cli'
-require 'scnr/ui/cli/rpc/server/dispatcher'
+require 'scnr/ui/cli/rpc/server/agent'
 
-SCNR::UI::CLI::RPC::Server::Dispatcher.new
+SCNR::UI::CLI::RPC::Server::Agent.new

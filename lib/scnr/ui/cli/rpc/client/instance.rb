@@ -96,8 +96,8 @@ class Instance
             print_info "Scheduler:      #{scheduler_url}"
         end
 
-        if dispatcher_url
-            print_info "Dispatcher: #{dispatcher_url}"
+        if agent_url
+            print_info "Agent: #{agent_url}"
         end
 
         print_line
@@ -156,8 +156,8 @@ class Instance
         @progress[:scheduler_url]
     end
 
-    def dispatcher_url
-        @progress[:dispatcher_url]
+    def agent_url
+        @progress[:agent_url]
     end
 
     def get_user_command

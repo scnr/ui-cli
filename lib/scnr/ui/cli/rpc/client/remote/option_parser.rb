@@ -21,15 +21,15 @@ class OptionParser < UI::CLI::Engine::OptionParser
     def grid
         separator 'Grid'
 
-        on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
-            Cuboid::Options.dispatcher.url = url
+        on( '--agent-url HOST:PORT', 'Agent to use.' ) do |url|
+            Cuboid::Options.agent.url = url
         end
 
-        on( '--dispatcher-strategy STRATEGY', 'Default distribution strategy.',
-            "(Available: #{Cuboid::OptionGroups::Dispatcher::STRATEGIES.join( ', ')})",
-            "(Default: #{Cuboid::Options.dispatcher.strategy})"
+        on( '--agent-strategy STRATEGY', 'Default distribution strategy.',
+            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.join( ', ')})",
+            "(Default: #{Cuboid::Options.agent.strategy})"
         ) do |strategy|
-            Cuboid::Options.dispatcher.strategy = strategy
+            Cuboid::Options.agent.strategy = strategy
         end
     end
 
@@ -57,13 +57,13 @@ class OptionParser < UI::CLI::Engine::OptionParser
     end
 
     def validate
-        if Cuboid::Options.dispatcher.url
+        if Cuboid::Options.agent.url
             begin
-                SCNR::Engine::RPC::Client::Dispatcher.new(
-                  Cuboid::Options.dispatcher.url
+                SCNR::Engine::RPC::Client::Agent.new(
+                  Cuboid::Options.agent.url
                 ).alive?
             rescue => e
-                print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
+                print_error "Could not reach Agent at: #{Cuboid::Options.agent.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end
@@ -73,7 +73,7 @@ class OptionParser < UI::CLI::Engine::OptionParser
     end
 
     def banner
-        "Usage: #{$0} [options] --dispatcher-url=HOST:PORT URL"
+        "Usage: #{$0} [options] --agent-url=HOST:PORT URL"
     end
 
 end

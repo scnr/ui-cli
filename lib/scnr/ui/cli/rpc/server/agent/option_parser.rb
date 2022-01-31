@@ -13,7 +13,7 @@ module SCNR
 module UI::CLI
 module RPC
 module Server
-class Dispatcher
+class Agent
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::OptionParser
@@ -25,8 +25,8 @@ class OptionParser < UI::CLI::OptionParser
 
         separator 'Server'
 
-        on( '--name NAME', 'Name for this Dispatcher.' ) do |name|
-            Cuboid::Options.dispatcher.name = name
+        on( '--name NAME', 'Name for this Agent.' ) do |name|
+            Cuboid::Options.agent.name = name
         end
 
         on( '--address ADDRESS', 'Hostname or IP address to bind to.',
@@ -49,23 +49,23 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--port-range BEGINNING-END',
                'Specify port range for the spawned RPC instances.',
-               "(Default: #{Cuboid::Options.dispatcher.instance_port_range.join( '-' )})"
+               "(Default: #{Cuboid::Options.agent.instance_port_range.join( '-' )})"
         ) do |range|
-            Cuboid::Options.dispatcher.instance_port_range = range.split( '-' ).map(&:to_i)
+            Cuboid::Options.agent.instance_port_range = range.split( '-' ).map(&:to_i)
         end
 
         separator ''
         separator 'Grid'
 
-        on( '--neighbour URL', 'URL of a neighbouring Dispatcher.' ) do |url|
-            Cuboid::Options.dispatcher.neighbour = url
+        on( '--peer URL', 'URL of a peering Agent.' ) do |url|
+            Cuboid::Options.agent.peer = url
         end
 
         on( '--strategy STRATEGY', 'Default distribution strategy.',
-            "(Available: #{Cuboid::OptionGroups::Dispatcher::STRATEGIES.join( ', ')})",
-            "(Default: #{Cuboid::Options.dispatcher.strategy})"
+            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.join( ', ')})",
+            "(Default: #{Cuboid::Options.agent.strategy})"
         ) do |name|
-            Cuboid::Options.dispatcher.strategy = strategy
+            Cuboid::Options.agent.strategy = strategy
         end
 
         separator ''
@@ -150,13 +150,13 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate
-        if Cuboid::Options.dispatcher.neighbour
+        if Cuboid::Options.agent.peer
             begin
-                SCNR::Engine::RPC::Client::Dispatcher.new(
-                  Cuboid::Options.dispatcher.neighbour
+                SCNR::Engine::RPC::Client::Agent.new(
+                  Cuboid::Options.agent.peer
                 ).alive?
             rescue => e
-                print_error "Could not reach neighbour at: #{Cuboid::Options.dispatcher.neighbour}"
+                print_error "Could not reach peer at: #{Cuboid::Options.agent.peer}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end

@@ -10,7 +10,7 @@ require_relative 'unplug/option_parser'
 
 module SCNR
 
-require 'scnr/engine/rpc/client/dispatcher'
+require 'scnr/engine/rpc/client/agent'
 
 module UI::CLI
 module RPC::Client
@@ -27,12 +27,12 @@ class Unplug
         options = parser.options
 
         begin
-            @dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( Cuboid::Options.dispatcher.url )
-            @dispatcher.node.unplug
+            @agent = SCNR::Engine::RPC::Client::Agent.new( Cuboid::Options.agent.url )
+            @agent.node.unplug
 
-            print_ok "Unplugged #{Cuboid::Options.dispatcher.url}."
+            print_ok "Unplugged #{Cuboid::Options.agent.url}."
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not connect to Dispatcher at '#{options.url}'."
+            print_error "Could not connect to Agent at '#{options.url}'."
             print_error "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1

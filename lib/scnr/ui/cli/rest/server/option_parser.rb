@@ -41,8 +41,8 @@ class OptionParser < UI::CLI::OptionParser
         separator ''
         separator 'Grid'
 
-        on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
-            Cuboid::Options.dispatcher.url = url
+        on( '--agent-url HOST:PORT', 'Agent to use.' ) do |url|
+            Cuboid::Options.agent.url = url
         end
 
         separator ''
@@ -137,7 +137,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--system-max-slots SLOTS', Integer,
             'Maximum amount of Instances to be alive at any given time.',
-            'Only applicable when no Dispatcher has been provided.',
+            'Only applicable when no Agent has been provided.',
             '(Default: auto)'
         ) do |max_slots|
             Cuboid::Options.system.max_slots = max_slots
@@ -145,13 +145,13 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate
-        if Cuboid::Options.dispatcher.url
+        if Cuboid::Options.agent.url
             begin
-                SCNR::Engine::RPC::Client::Dispatcher.new(
-                    Cuboid::Options.dispatcher.url
+                SCNR::Engine::RPC::Client::Agent.new(
+                    Cuboid::Options.agent.url
                 ).alive?
             rescue => e
-                print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
+                print_error "Could not reach Agent at: #{Cuboid::Options.agent.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end

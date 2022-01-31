@@ -12,18 +12,18 @@ module SCNR
 module UI::CLI
 module RPC
 module Client
-class DispatcherMonitor
+class AgentMonitor
 
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < Client::Remote::OptionParser
 
     def after_parse
-        Cuboid::Options.dispatcher.url = ARGV.shift
+        Cuboid::Options.agent.url = ARGV.shift
     end
 
     def validate
-        # Check for missing Dispatcher
-        return if Cuboid::Options.dispatcher.url
+        # Check for missing Agent
+        return if Cuboid::Options.agent.url
 
         print_error 'Missing DISPATCHER_URL option.'
         exit 1

@@ -16,7 +16,7 @@ require 'scnr/ui/cli/utilities'
 module UI::CLI
 module RPC::Client
 
-# Provides a command-line RPC client and uses a {RPC::Server::Dispatcher} to
+# Provides a command-line RPC client and uses a {RPC::Server::Agent} to
 # provide an {RPC::Server::Instance} in order to perform a scan.
 #
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
@@ -46,20 +46,20 @@ class Remote
         options = parser.options
 
         begin
-            dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new(
-              Cuboid::Options.dispatcher.url
+            agent = SCNR::Engine::RPC::Client::Agent.new(
+              Cuboid::Options.agent.url
             )
 
             # Get a new instance and assign the url we're going to audit as the 'owner'.
-            instance_info = dispatcher.dispatch( owner: options.url )
+            instance_info = agent.spawn( owner: options.url )
 
             if !instance_info
-                print_info 'Dispatcher is at maximum utilization, please try again later.'
+                print_info 'Agent is at maximum utilization, please try again later.'
                 exit 2
             end
 
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not connect to Dispatcher at '#{Cuboid::Options.dispatcher.url}'."
+            print_error "Could not connect to Agent at '#{Cuboid::Options.agent.url}'."
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1

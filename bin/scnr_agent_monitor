@@ -8,11 +8,11 @@
 =end
 
 require 'scnr/ui/cli'
-require 'scnr/ui/cli/rpc/client/dispatcher_monitor'
+require 'scnr/ui/cli/rpc/client/agent_monitor'
 
 if SCNR::Engine.windows?
     SCNR::UI::CLI::Output.print_error 'This interface is not available on MS Windows.'
     exit
 end
 
-SCNR::UI::CLI::RPC::Client::DispatcherMonitor.new
+SCNR::UI::CLI::RPC::Client::AgentMonitor.new

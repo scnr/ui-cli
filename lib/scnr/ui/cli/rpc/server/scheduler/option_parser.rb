@@ -44,23 +44,23 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--port-range BEGINNING-END',
                'Specify port range for the spawned RPC instances.',
-               "(Default: #{Cuboid::Options.dispatcher.instance_port_range.join( '-' )})"
+               "(Default: #{Cuboid::Options.agent.instance_port_range.join( '-' )})"
         ) do |range|
-            Cuboid::Options.dispatcher.instance_port_range = range.split( '-' ).map(&:to_i)
+            Cuboid::Options.agent.instance_port_range = range.split( '-' ).map(&:to_i)
         end
 
         separator ''
         separator 'Grid'
 
-        on( '--dispatcher-url HOST:PORT', 'Dispatcher to use.' ) do |url|
-            Cuboid::Options.dispatcher.url = url
+        on( '--agent-url HOST:PORT', 'Agent to use.' ) do |url|
+            Cuboid::Options.agent.url = url
         end
 
-        on( '--dispatcher-strategy STRATEGY', 'Default distribution strategy.',
-            "(Available: #{Cuboid::OptionGroups::Dispatcher::STRATEGIES.join( ', ')})",
-            "(Default: #{Cuboid::Options.dispatcher.strategy})"
+        on( '--agent-strategy STRATEGY', 'Default distribution strategy.',
+            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.join( ', ')})",
+            "(Default: #{Cuboid::Options.agent.strategy})"
         ) do |strategy|
-            Cuboid::Options.dispatcher.strategy = strategy
+            Cuboid::Options.agent.strategy = strategy
         end
 
         separator ''
@@ -150,7 +150,7 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--system-max-slots SLOTS', Integer,
             'Maximum amount of Instances to be alive at any given time.',
-            'Only applicable when no Dispatcher has been provided.',
+            'Only applicable when no Agent has been provided.',
             '(Default: auto)'
         ) do |max_slots|
             options.system.max_slots = max_slots
@@ -158,13 +158,13 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def validate
-        if Cuboid::Options.dispatcher.url
+        if Cuboid::Options.agent.url
             begin
-                SCNR::Engine::RPC::Client::Dispatcher.new(
-                    Cuboid::Options.dispatcher.url
+                SCNR::Engine::RPC::Client::Agent.new(
+                    Cuboid::Options.agent.url
                 ).alive?
             rescue => e
-                print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
+                print_error "Could not reach Agent at: #{Cuboid::Options.agent.url}"
                 print_error "#{e.class}: #{e.to_s}"
                 exit 1
             end

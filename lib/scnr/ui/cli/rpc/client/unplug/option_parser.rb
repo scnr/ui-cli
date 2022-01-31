@@ -41,21 +41,21 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        Cuboid::Options.dispatcher.url = ARGV.shift
+        Cuboid::Options.agent.url = ARGV.shift
     end
 
     def validate
-        if !Cuboid::Options.dispatcher.url
+        if !Cuboid::Options.agent.url
             print_error "Missing 'DISPATCHER_URL'."
             exit 1
         end
 
         begin
-            SCNR::Engine::RPC::Client::Dispatcher.new(
-              Cuboid::Options.dispatcher.url
+            SCNR::Engine::RPC::Client::Agent.new(
+              Cuboid::Options.agent.url
             ).alive?
         rescue => e
-            print_error "Could not reach Dispatcher at: #{Cuboid::Options.dispatcher.url}"
+            print_error "Could not reach Agent at: #{Cuboid::Options.agent.url}"
             print_error "#{e.class}: #{e.to_s}"
             exit 1
         end

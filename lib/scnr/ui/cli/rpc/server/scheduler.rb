@@ -25,8 +25,8 @@ class Scheduler
         SCNR::Application.spawn(
           :scheduler,
 
-          dispatcher:         Cuboid::Options.dispatcher.url,
-          strategy:           Cuboid::Options.dispatcher.strategy,
+          agent:         Cuboid::Options.agent.url,
+          strategy:           Cuboid::Options.agent.strategy,
 
           port:               Cuboid::Options.rpc.server_port,
           address:            Cuboid::Options.rpc.server_address,

@@ -7,7 +7,7 @@
 =end
 
 require 'terminal-table/import'
-require_relative 'dispatcher_monitor/option_parser'
+require_relative 'agent_monitor/option_parser'
 
 module SCNR
 
@@ -16,15 +16,15 @@ require 'scnr/ui/cli/utilities'
 module UI::CLI
 module RPC::Client
 
-# Provides an simplistic Dispatcher monitoring user interface.
+# Provides an simplistic Agent monitoring user interface.
 #
 # @author Tasos "Zapotek" Laskos<tasos.laskos@gmail.com>
-class DispatcherMonitor
+class AgentMonitor
     include Output
     include Utilities
 
     def initialize
-        parser = DispatcherMonitor::OptionParser.new
+        parser = AgentMonitor::OptionParser.new
         parser.ssl
         parser.parse
 
@@ -35,10 +35,10 @@ class DispatcherMonitor
 
         begin
             # start the RPC client
-            @dispatcher = SCNR::Engine::RPC::Client::Dispatcher.new( Cuboid::Options.dispatcher.url )
-            @dispatcher.alive?
+            @agent = SCNR::Engine::RPC::Client::Agent.new( Cuboid::Options.agent.url )
+            @agent.alive?
         rescue Arachni::RPC::Exceptions::ConnectionError => e
-            print_error "Could not connect to Dispatcher at '#{Cuboid::Options.url}'."
+            print_error "Could not connect to Agent at '#{Cuboid::Options.url}'."
             print_error "Error: #{e.to_s}."
             print_debug_backtrace e
             exit 1
@@ -59,7 +59,7 @@ class DispatcherMonitor
             empty_screen
             move_to_home
 
-            stats = @dispatcher.statistics
+            stats = @agent.statistics
             running_instances = stats['running_instances']
 
             print_banner
@@ -99,17 +99,17 @@ class DispatcherMonitor
 
         print_line
 
-        if stats['node']['neighbours'].any?
+        if stats['node']['peers'].any?
             print_info 'Neighbours:'
-            stats['node']['neighbours'].each do |neighbour|
-                print_info "* #{neighbour}"
+            stats['node']['peers'].each do |peer|
+                print_info "* #{peer}"
             end
         end
 
-        if stats['node']['unreachable_neighbours'].any?
-            print_info 'Unreachable neighbours:'
-            stats['node']['unreachable_neighbours'].each do |neighbour|
-                print_info "* #{neighbour}"
+        if stats['node']['unreachable_peers'].any?
+            print_info 'Unreachable peers:'
+            stats['node']['unreachable_peers'].each do |peer|
+                print_info "* #{peer}"
             end
         end
     end
