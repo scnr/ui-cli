@@ -22,7 +22,7 @@ group :prof do
     gem 'memory_profiler'
 end
 
-gem 'nokogiri', github: 'sparklemotion/nokogiri'
+gem 'nokogiri', github: 'sparklemotion/nokogiri', branch: 'main'
 gem 'ethon',    github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 
 if File.exist? '../../../qadron/dsel'
