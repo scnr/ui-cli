@@ -18,6 +18,8 @@ class Remote
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::Engine::OptionParser
 
+    attr_reader :multi_processes
+
     def grid
         separator 'Grid'
 
@@ -26,10 +28,18 @@ class OptionParser < UI::CLI::Engine::OptionParser
         end
 
         on( '--agent-strategy STRATEGY', 'Default distribution strategy.',
-            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.join( ', ')})",
+            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.to_a.join( ', ')})",
             "(Default: #{Cuboid::Options.agent.strategy})"
         ) do |strategy|
             Cuboid::Options.agent.strategy = strategy
+        end
+    end
+
+    def multi
+        separator 'Multi-process'
+
+        on( '--multi-processes PROCESSES', Integer, 'How many processes to use.' ) do |processes|
+            @multi_processes = processes
         end
     end
 

@@ -38,9 +38,10 @@ class Instance
 
     # @param    [RPC::Client::Instance]     instance
     #   Instance to control.
-    def initialize( instance )
-        @options  = SCNR::Engine::Options.instance
-        @instance = instance
+    def initialize( instance, cli_options )
+        @options     = SCNR::Engine::Options.instance
+        @cli_options = cli_options
+        @instance    = instance
 
         clear_screen
         move_to_home
@@ -61,7 +62,9 @@ class Instance
             # We may be re-attaching, don't call scan again.
             if @instance.status == :ready
                 # Start the show!
-                @instance.run prepare_rpc_options
+                @instance.run prepare_rpc_options.merge(
+                  multi: { processes: @cli_options.multi_processes }
+                )
             end
 
             while busy?
