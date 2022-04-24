@@ -10,8 +10,6 @@ require_relative 'unplug/option_parser'
 
 module SCNR
 
-require 'scnr/engine/rpc/client/agent'
-
 module UI::CLI
 module RPC::Client
 

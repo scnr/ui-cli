@@ -46,7 +46,7 @@ class OptionParser < UI::CLI::OptionParser
 
     def validate
         if !Cuboid::Options.agent.url
-            print_error "Missing 'DISPATCHER_URL'."
+            print_error "Missing 'AGENT_URL'."
             exit 1
         end
 
@@ -64,7 +64,7 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def banner
-        "Usage: #{$0} DISPATCHER_URL"
+        "Usage: #{$0} AGENT_URL"
     end
 
 end
