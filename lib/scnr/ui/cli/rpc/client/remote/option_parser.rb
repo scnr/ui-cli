@@ -18,7 +18,7 @@ class Remote
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 class OptionParser < UI::CLI::Engine::OptionParser
 
-    attr_reader :multi_processes
+    attr_reader :multi_instances
 
     def grid
         separator 'Grid'
@@ -36,10 +36,10 @@ class OptionParser < UI::CLI::Engine::OptionParser
     end
 
     def multi
-        separator 'Multi-process'
+        separator 'Multi'
 
-        on( '--multi-processes PROCESSES', Integer, 'How many processes to use.' ) do |processes|
-            @multi_processes = processes
+        on( '--multi-instances INSTANCES', Integer, 'How many Instances to use.' ) do |instances|
+            @multi_instances = instances
         end
     end
 

@@ -63,7 +63,7 @@ class Instance
             if @instance.status == :ready
                 # Start the show!
                 @instance.run prepare_rpc_options.merge(
-                  multi: { processes: @cli_options.multi_processes }
+                  multi: { instances: @cli_options.multi_instances }
                 )
             end
 
