@@ -341,16 +341,22 @@ class Instance
     end
 
     def print_statistics
+        http            = statistics[:http]
+        browser_cluster = statistics[:browser_pool]
+
         print_info "Status: #{status.to_s.capitalize}"
-
-        print_info "Discovered #{statistics[:found_pages]} pages thus far."
         print_line
+        print_info "Audited #{statistics[:audited_pages]} page snapshots."
+        print_info "Duration: #{seconds_to_hms( statistics[:runtime] )}"
+        print_line
+        res_req = "#{http[:response_count]}/#{http[:request_count]}"
+        print_info "Processed #{res_req} HTTP requests -- timed-out: #{http[:time_out_count]}"
+        print_info "-- #{http[:total_responses_per_second].round(3)} requests/second."
 
-        http = statistics[:http]
-        print_info "Sent #{http[:request_count]} requests."
-        print_info "Received and analyzed #{http[:response_count]} responses."
-        print_info( "In #{seconds_to_hms( statistics[:runtime] )}" )
-        print_info "Average: #{http[:total_responses_per_second].round(2)} requests/second."
+        jobs = "#{browser_cluster[:completed_job_count]}/#{browser_cluster[:queued_job_count]}"
+        print_info "Processed #{jobs} browser jobs -- timed-out: #{browser_cluster[:time_out_count]}"
+
+        print_info "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
 
         print_line
         if statistics[:current_pages]
