@@ -24,17 +24,6 @@ end
 
 gem 'ethon', github: 'typhoeus/ethon', branch: 'thread-safe-easy-handle-cleanup'
 
-if File.exist? '../../qadron/raktr'
-    gem 'raktr', path: '../../qadron/raktr'
-end
-
-if File.exist? '../../qadron/dsel'
-    gem 'dsel', path: '../../qadron/dsel'
-end
-
-if File.exist? '../../qadron/cuboid'
-    gem 'cuboid', path: '../../qadron/cuboid'
-end
 
 if File.exist? '../application'
     gem 'scnr-application', path: '../application'
