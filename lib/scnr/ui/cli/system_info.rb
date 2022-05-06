@@ -66,11 +66,11 @@ class SystemInfo
         print_info "  Available: #{bytes_to_gb( system.memory_free )} GB"
 
         if show_hint
-            ps         = options.browser_cluster.pool_size
+            ps         = options.dom.pool_size
             valid_size = 0
 
             ps.downto(0).each do |size|
-                options.browser_cluster.pool_size = size
+                options.dom.pool_size = size
                 next if slots.available_in_memory == 0
 
                 valid_size = size
@@ -81,7 +81,7 @@ class SystemInfo
                 print_info "  Hint:      Try: --browser-cluster-pool-size=#{valid_size}"
             end
 
-            options.browser_cluster.pool_size = ps
+            options.dom.pool_size = ps
         end
         print_line
 
