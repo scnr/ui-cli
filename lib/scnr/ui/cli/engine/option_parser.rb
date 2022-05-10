@@ -202,7 +202,7 @@ class OptionParser < UI::CLI::OptionParser
         on( '--system-slots-override',
             'Override automated slot calculation and run the scan.'
         ) do
-            options.system.max_slots = 1
+            Cuboid::Options.system.max_slots = 1
         end
     end
 
