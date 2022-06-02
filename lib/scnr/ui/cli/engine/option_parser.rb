@@ -646,6 +646,15 @@ class OptionParser < UI::CLI::OptionParser
             options.dom.engine = engine
         end
 
+        on( "--dom-scheduling #{options.dom.class::SCHEDULING.join( ', ' )}",
+            'Scheduling to use.',
+            '* :batch will run jobs in batches to keep resource usage low -- best suited for large sites.',
+            '* :continuous will continuously run jobs in the background for better performance -- best suited for smaller sites.',
+            "(Default: #{options.dom.scheduling})"
+        ) do |scheduling|
+            options.dom.scheduling = scheduling
+        end
+
         on( '--dom-local-storage FILE',
             "Sets the browsers' local storage using the JSON data in FILE."
         ) do |file|
