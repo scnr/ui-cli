@@ -336,7 +336,7 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         on( '--http-request-queue-size SIZE', Integer,
-               'Maximum amount of requests to keep in the scheduler.',
+               'Maximum amount of requests to keep in the queue.',
                'Bigger size means better scheduling and better performance,',
                'smaller means less RAM consumption.',
                "(Default: #{options.http.request_queue_size})"
@@ -644,15 +644,6 @@ class OptionParser < UI::CLI::OptionParser
             "(Default: #{options.dom.engine})"
         ) do |engine|
             options.dom.engine = engine
-        end
-
-        on( "--dom-scheduling #{options.dom.class::SCHEDULING.join( ', ' )}",
-            'Scheduling to use.',
-            '* :batch will run jobs in batches to keep resource usage low -- best suited for large sites.',
-            '* :continuous will continuously run jobs in the background for better performance -- best suited for smaller sites.',
-            "(Default: #{options.dom.scheduling})"
-        ) do |scheduling|
-            options.dom.scheduling = scheduling
         end
 
         on( '--dom-local-storage FILE',
