@@ -180,6 +180,11 @@ class Engine
         browser_cluster = statistics[:browser_pool]
 
         refresh_line nil, unmute
+        if !statistics[:current_page].to_s.empty?
+            refresh_info( "Currently auditing          #{statistics[:current_page]}", unmute )
+        end
+        refresh_line nil, unmute
+        refresh_line nil, unmute
         refresh_info( "Audited #{statistics[:audited_pages]} page snapshots.", unmute )
 
         if SCNR::Engine::Options.scope.page_limit
@@ -202,18 +207,16 @@ class Engine
 
         jobsps = "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
         refresh_info( jobsps, unmute )
-
         refresh_line nil, unmute
-        if !statistics[:current_page].to_s.empty?
-            refresh_info( "Currently auditing          #{statistics[:current_page]}", unmute )
-        end
 
-        refresh_info( "Burst response time sum     #{http[:burst_response_time_sum].round(3)} seconds", unmute )
-        refresh_info( "Burst response count        #{http[:burst_response_count]}", unmute )
+        refresh_info( "Burst avg application time  #{http[:burst_average_app_time].round(3)} seconds", unmute )
         refresh_info( "Burst average response time #{http[:burst_average_response_time].round(3)} seconds", unmute )
-        refresh_info( "Burst average               #{http[:burst_responses_per_second].round(3)} requests/second", unmute )
-        refresh_info( "Original max concurrency    #{options.http.request_concurrency}", unmute )
-        refresh_info( "Throttled max concurrency   #{http[:max_concurrency]}", unmute )
+        refresh_info( "Burst average responses/s   #{http[:burst_responses_per_second].round(3)} responses/second", unmute )
+        refresh_line nil, unmute
+        refresh_info( "Average application time    #{http[:total_average_app_time].round(3)} seconds", unmute )
+        refresh_info( "Download speed              #{(http[:download_bps] / 1000 * 8).round(3)} KBps", unmute )
+        refresh_info( "Upload speed                #{(http[:upload_bps] / 1000 * 8).round(3)} KBps", unmute )
+        refresh_info( "Concurrency                 #{http[:max_concurrency]}/#{options.http.request_concurrency} connections", unmute )
 
         refresh_line nil, unmute
     end
