@@ -197,13 +197,13 @@ class Engine
         refresh_info( "Duration: #{seconds_to_hms( statistics[:runtime] )}", unmute )
 
         res_req = "#{statistics[:http][:response_count]}/#{statistics[:http][:request_count]}"
-        refresh_info( "Processed #{res_req} HTTP requests -- timed-out: #{http[:time_out_count]}", unmute )
+        refresh_info( "Processed #{res_req} HTTP requests -- failed: #{http[:failed_count]}", unmute )
 
         avg = "-- #{http[:total_responses_per_second].round(3)} requests/second."
         refresh_info( avg, unmute )
 
         jobs = "#{browser_cluster[:completed_job_count]}/#{browser_cluster[:queued_job_count]}"
-        refresh_info( "Processed #{jobs} browser jobs -- timed-out: #{browser_cluster[:time_out_count]}", unmute )
+        refresh_info( "Processed #{jobs} browser jobs -- failed: #{browser_cluster[:failed_count]}", unmute )
 
         jobsps = "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
         refresh_info( jobsps, unmute )
