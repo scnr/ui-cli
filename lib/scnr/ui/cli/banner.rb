@@ -13,10 +13,11 @@ module SCNR
 module UI
 module CLI
 
-    WEBSITE = 'http://placeholder.com'
+    WEBSITE = 'http://ecsypno.com'
 
     BANNER =<<EOBANNER
 SCNR::UI::CLI v#{CLI::VERSION} - SCNR::Engine v#{Engine::VERSION}
+    by Ecsypno Single Member P.C. (Copyright 2023)
 EOBANNER
 
 end

@@ -7,10 +7,10 @@ Gem::Specification.new do |s|
     s.name          = 'scnr-ui-cli'
     s.version       = SCNR::UI::CLI::VERSION
     s.authors       = ['Tasos Laskos']
-    s.email         = ['tasos.laskos@gmail.com']
+    s.email         = ['tasos.laskos@ecsypno.com']
 
     s.summary       = %q{Command line interface for SCNR::Engine.}
-    s.homepage      = 'http://www.placeholder.com'
+    s.homepage      = 'http://ecsypno.com'
 
     # Disable pushes to public servers.
     if s.respond_to?(:metadata)
