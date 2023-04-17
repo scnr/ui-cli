@@ -40,7 +40,7 @@ class Connect
         end
 
         # Let the Instance UI manage the Instance from now on.
-        Instance.new( instance ).run
+        Instance.new( instance, parser ).run
     end
 
 end

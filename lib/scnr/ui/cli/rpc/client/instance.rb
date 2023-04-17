@@ -377,8 +377,6 @@ class Instance
             print_info "Currently auditing           #{statistics[:current_page]}"
         end
 
-        print_info "Burst response time sum      #{http[:burst_response_time_sum].round(2)} seconds"
-        print_info "Burst response count total   #{http[:burst_response_count]}"
         print_info "Burst average response time  #{http[:burst_average_response_time].round(2)} seconds"
         print_info "Burst average                #{http[:burst_responses_per_second].round(2)} requests/second"
         print_info "Timed-out requests           #{http[:time_out_count]}"
