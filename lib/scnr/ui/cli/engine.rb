@@ -204,7 +204,6 @@ class Engine
 
         jobs = "#{browser_cluster[:completed_job_count]}/#{browser_cluster[:queued_job_count]}"
         refresh_info( "Processed #{jobs} browser jobs -- failed: #{browser_cluster[:failed_count]}", unmute )
-
         jobsps = "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
         refresh_info( jobsps, unmute )
         refresh_line nil, unmute

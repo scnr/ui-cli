@@ -350,12 +350,11 @@ class Instance
         print_info "Duration: #{seconds_to_hms( statistics[:runtime] )}"
         print_line
         res_req = "#{http[:response_count]}/#{http[:request_count]}"
-        print_info "Processed #{res_req} HTTP requests -- timed-out: #{http[:time_out_count]}"
+        print_info "Processed #{res_req} HTTP requests -- failed: #{http[:failed_count]}"
         print_info "-- #{http[:total_responses_per_second].round(3)} requests/second."
 
         jobs = "#{browser_cluster[:completed_job_count]}/#{browser_cluster[:queued_job_count]}"
-        print_info "Processed #{jobs} browser jobs -- timed-out: #{browser_cluster[:time_out_count]}"
-
+        print_info "Processed #{jobs} browser jobs -- failed: #{browser_cluster[:failed_count]}"
         print_info "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
 
         print_line
@@ -371,17 +370,18 @@ class Instance
                     print_info "#{cnt} #{url}"
                 end
             end
-
-            print_line
         else
             print_info "Currently auditing           #{statistics[:current_page]}"
         end
-
+        print_line
+        print_info "Burst avg application time   #{http[:burst_average_app_time].round(3)} seconds"
         print_info "Burst average response time  #{http[:burst_average_response_time].round(2)} seconds"
-        print_info "Burst average                #{http[:burst_responses_per_second].round(2)} requests/second"
-        print_info "Timed-out requests           #{http[:time_out_count]}"
-        print_info "Original max concurrency     #{@options.http.request_concurrency}"
-        print_info "Throttled max concurrency    #{http[:max_concurrency]}"
+        print_info "Burst average responses/s    #{http[:burst_responses_per_second].round(2)} requests/second"
+        print_line
+        print_info "Average application time    #{http[:total_average_app_time].round(3)} seconds"
+        print_info "Download speed              #{(http[:download_bps] / 1000 * 8).round(3)} KBps"
+        print_info "Upload speed                #{(http[:upload_bps] / 1000 * 8).round(3)} KBps"
+        print_info "Concurrency                 #{http[:max_concurrency]}/#{@options.http.request_concurrency} connections"
     end
 
     def parse_cookie_jar( jar )
