@@ -300,10 +300,14 @@ class Instance
         generate_reports
 
         print_line
-        print_info "Report saved at:   #{@report_filepath} [#{@report_filesize}MB]"
+        print_info "Report saved at:     #{@report_filepath} [#{@report_filesize}MB]"
 
         if @instance.status == :suspended
-            print_info "Snapshot saved at: #{@instance.snapshot_path}"
+            print_info "Snapshot saved at:   #{@instance.snapshot_path}"
+        end
+
+        if @error_log_file
+            print_bad "Error logg saved at: #{@error_log_file}"
         end
 
         print_line
