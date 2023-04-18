@@ -59,7 +59,7 @@ class Remote
                 exit 2
             end
 
-        rescue Arachni::RPC::Exceptions::ConnectionError => e
+        rescue Toq::Exceptions::ConnectionError => e
             print_error "Could not connect to Agent at '#{Cuboid::Options.agent.url}'."
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
@@ -73,7 +73,7 @@ class Remote
                 instance_info['token']
             )
             instance.alive?
-        rescue Arachni::RPC::Exceptions::ConnectionError => e
+        rescue Toq::Exceptions::ConnectionError => e
             print_error 'Could not connect to Instance.'
             print_debug "Error: #{e.to_s}."
             print_debug_backtrace e
