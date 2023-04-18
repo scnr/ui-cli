@@ -358,14 +358,20 @@ class Instance
         print_info "-- #{browser_cluster[:seconds_per_job].round(3)} second/job."
 
         print_line
-        if statistics[:current_pages]
+        if @progress[:multi]
             print_info 'Currently auditing:'
 
-            statistics[:current_pages].each.with_index do |url, i|
-                cnt = "[#{i + 1}]".rjust( statistics[:current_pages].size.to_s.size + 4 )
+            @progress[:multi][:auditors].values.each.with_index do |auditor_p, i|
+                cnt = "[#{i + 1}]".rjust( @progress[:multi].size.to_s.size + 4 )
+                url = auditor_p[:statistics][:current_page]
 
                 if url.to_s.empty?
                     print_info "#{cnt} Idle"
+
+                    if auditor_p[:messages].any?
+                        print_info "    #{auditor_p[:messages].join( ', ' )}"
+                    end
+
                 else
                     print_info "#{cnt} #{url}"
                 end
@@ -373,6 +379,7 @@ class Instance
         else
             print_info "Currently auditing           #{statistics[:current_page]}"
         end
+
         print_line
         print_info "Burst avg application time   #{http[:burst_average_app_time].round(3)} seconds"
         print_info "Burst average response time  #{http[:burst_average_response_time].round(2)} seconds"
