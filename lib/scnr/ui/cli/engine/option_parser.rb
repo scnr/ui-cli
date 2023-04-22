@@ -262,12 +262,12 @@ class OptionParser < UI::CLI::OptionParser
             options.audit.ui_forms = true
         end
 
-        on( '--audit-paranoia [LEVEL]', String,
-            options.audit.class::PARANOIA_LEVELS.join( ', ' ),
+        on( '--audit-mode [LEVEL]', String,
+            options.audit.class::MODES.join( ', ' ),
             'Determines the thoroughness of the audit -- mostly affects check payloads.',
-            "(Default: #{options.audit.paranoia})"
+            "(Default: #{options.audit.mode})"
         ) do |level|
-            options.audit.paranoia = level
+            options.audit.mode = level
         end
 
         on( '--audit-parameter-names',
