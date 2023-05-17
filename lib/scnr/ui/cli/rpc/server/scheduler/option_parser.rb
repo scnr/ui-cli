@@ -57,7 +57,7 @@ class OptionParser < UI::CLI::OptionParser
         end
 
         on( '--agent-strategy STRATEGY', 'Default distribution strategy.',
-            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.join( ', ')})",
+            "(Available: #{Cuboid::OptionGroups::Agent::STRATEGIES.to_a.join( ', ')})",
             "(Default: #{Cuboid::Options.agent.strategy})"
         ) do |strategy|
             Cuboid::Options.agent.strategy = strategy
