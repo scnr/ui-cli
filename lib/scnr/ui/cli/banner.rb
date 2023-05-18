@@ -16,7 +16,7 @@ module CLI
     WEBSITE = 'https://ecsypno.com'
 
     BANNER =<<EOBANNER
-SCNR::UI::CLI v#{CLI::VERSION} - SCNR::Engine v#{Engine::VERSION}
+            Codename SCNR v#{SCNR::VERSION}
     by Ecsypno Single Member P.C. (Copyright 2023)
              #{WEBSITE}
 EOBANNER
