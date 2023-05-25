@@ -429,7 +429,8 @@ class Engine
 
         report = @scan.generate_report
 
-        SCNR::Engine::Reporter::Manager.new.run :stdout, report
+        @reporter ||= SCNR::Engine::Reporter::Manager.new
+        @reporter.run :stdout, report
 
         filepath = report.save( options.report.path )
         filesize = (File.size( filepath ).to_f / 2**20).round(2)
