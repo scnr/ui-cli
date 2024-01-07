@@ -158,6 +158,10 @@ class Engine
             end
 
             print_statistics
+            print_line "===================================================="
+            print_info "Please provide feedback at: contact@ecsypno.com"
+            print_info "-- Thank you in advance!"
+            print_line "===================================================="
         rescue SCNR::Engine::Component::Options::Error::Invalid => e
             print_error e
             print_line
