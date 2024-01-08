@@ -35,7 +35,7 @@ class Engine
         SCNR::Engine::HTTP::Client.reset
 
         @show_command_screen = nil
-        @cleanup_handler     = nil
+        @suspend_handler     = nil
 
         # Step into a pry session for debugging.
         if Signal.list.include?( 'USR1' )
@@ -101,8 +101,8 @@ class Engine
             @get_user_command_thread = nil
 
             hide_command_screen
-            clear_screen
-            shutdown
+            # clear_screen
+            Thread.new { shutdown }
         end
 
         # Kick the tires and light the fires.
@@ -130,20 +130,16 @@ class Engine
         get_user_command
 
         begin
-            # We may need to kill the audit so put it in a thread.
-            @scan_thread = Thread.new do
-                @scan.run do
-                    hide_command_screen
-                    restore_output_options
-                    clear_screen
-                end
+            @scan.run do
+                hide_command_screen
+                restore_output_options
+                clear_screen
             end
-            @scan_thread.join
 
             # If the user requested to abort the scan, wait for the thread
             # that takes care of the clean-up to finish.
-            if @cleanup_handler
-                @cleanup_handler.join
+            if @suspend_handler
+                @suspend_handler.join
             else
                 generate_reports
             end
@@ -314,6 +310,7 @@ class Engine
 
                 # Abort
                 when 'a'
+                    hide_command_screen
                     shutdown
 
                 # Pause
@@ -389,9 +386,10 @@ class Engine
     end
 
     def suspend
-        @cleanup_handler = Thread.new do
+        @suspend_handler = Thread.new do
             exception_jail do
                 @snapshot_path = @scan.suspend!
+                sleep 0.1 while @scan.status != :suspended
 
                 hide_command_screen
                 clear_screen
@@ -406,26 +404,18 @@ class Engine
     def shutdown
         capture_output_options
 
+        hide_command_screen
+        clear_screen
+
         print_status 'Aborting...'
         print_info 'Please wait while the system cleans up.'
 
-        killed = Queue.new
-        @cleanup_handler = Thread.new do
-            exception_jail do
-                killed.pop
+        @scan.abort!
+        sleep 0.1 while @scan.status != :aborted
 
-                @scan.abort!
+        restore_output_options
 
-                hide_command_screen
-                restore_output_options
-                clear_screen
-
-                generate_reports
-            end
-        end
-
-        @scan_thread.kill
-        killed << true
+        generate_reports
     end
 
     def generate_reports
