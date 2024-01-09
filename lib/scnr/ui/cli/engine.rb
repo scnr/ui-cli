@@ -97,12 +97,7 @@ class Engine
         end
 
         trap( 'INT' ) do
-            @get_user_command_thread.kill
-            @get_user_command_thread = nil
-
-            hide_command_screen
-            # clear_screen
-            Thread.new { shutdown }
+            Thread.new { abort }
         end
 
         # Kick the tires and light the fires.
@@ -130,11 +125,11 @@ class Engine
         get_user_command
 
         begin
-            @scan.run do
-                hide_command_screen
-                restore_output_options
-                clear_screen
-            end
+            @scan.run
+
+            hide_command_screen
+            restore_output_options
+            clear_screen
 
             # If the user requested to abort the scan, wait for the thread
             # that takes care of the clean-up to finish.
@@ -310,8 +305,7 @@ class Engine
 
                 # Abort
                 when 'a'
-                    hide_command_screen
-                    shutdown
+                    abort
 
                 # Pause
                 when 'p'
@@ -321,12 +315,12 @@ class Engine
 
                 # Resume
                 when 'r'
-                    return if !@scan.pausing? || !@scan.paused?
+                    next if !@scan.pausing? && !@scan.paused?
                     @scan.resume!
 
                 # Suspend
                 when 's'
-                    return if !@scan.scanning?
+                    next if !@scan.scanning?
                     suspend
 
                 # Generate reports.
@@ -386,36 +380,19 @@ class Engine
     end
 
     def suspend
-        @suspend_handler = Thread.new do
-            exception_jail do
-                @snapshot_path = @scan.suspend!
-                sleep 0.1 while @scan.status != :suspended
+        print_status 'Suspending...'
+        print_info 'Please wait while the system cleans up.'
 
-                hide_command_screen
-                clear_screen
-
-                capture_output_options
-
-                generate_reports
-            end
-        end
+        @snapshot_path = @scan.suspend!
+        sleep 0.1 while @scan.status != :suspended
     end
 
-    def shutdown
-        capture_output_options
-
-        hide_command_screen
-        clear_screen
-
+    def abort
         print_status 'Aborting...'
         print_info 'Please wait while the system cleans up.'
 
         @scan.abort!
         sleep 0.1 while @scan.status != :aborted
-
-        restore_output_options
-
-        generate_reports
     end
 
     def generate_reports
@@ -463,52 +440,10 @@ class Engine
 
         @daemon_friendly = parser.daemon_friendly?
 
-        if options.checks.any?
-        #     begin
-        #         @scan.checks.load( options.checks )
-        #     rescue SCNR::Engine::Component::Error::NotFound => e
-        #         print_error e
-        #         print_info 'Available checks are:'
-        #         print_info @scan.checks.available.join( ', ' )
-        #         print_line
-        #         print_info 'Use the \'--checks-list\' parameter to see a ' <<
-        #                        'detailed list of all available checks.'
-        #         exit 1
-        #     end
-        else
+        if options.checks.empty?
             print_info 'No checks were specified, loading all.'
             options.checks = ['*']
         end
-
-        # @scan.plugins.load_defaults
-        # if options.plugins.any?
-        #     begin
-        #         @scan.plugins.load( options.plugins.keys )
-        #     rescue SCNR::Engine::Component::Error::NotFound => e
-        #         print_error e
-        #         print_info 'Available plugins are:'
-        #         print_info @scan.plugins.available.join( ', ' )
-        #         print_line
-        #         print_info 'Use the \'--plugins-list\' parameter to see a ' <<
-        #                        'detailed list of all available plugins.'
-        #         exit 1
-        #     end
-        # end
-        #
-        # if options.platforms.any?
-        #     begin
-        #         SCNR::Engine::Platform::Manager.new( options.platforms )
-        #     rescue SCNR::Engine::Platform::Error::Invalid => e
-        #         options.platforms.clear
-        #         print_error e
-        #         print_info 'Available platforms are:'
-        #         print_info Platform::Manager.new.valid.to_a.join( ', ' )
-        #         print_line
-        #         print_info 'Use the \'--platforms-list\' parameter to see a' <<
-        #                        ' detailed list of all available platforms.'
-        #         exit 1
-        #     end
-        # end
 
         if !options.audit.links? && !options.audit.forms? &&
             !options.audit.cookies? && !options.audit.headers? &&
