@@ -129,7 +129,6 @@ class Engine
 
             hide_command_screen
             restore_output_options
-            clear_screen
 
             # If the user requested to abort the scan, wait for the thread
             # that takes care of the clean-up to finish.
