@@ -454,7 +454,7 @@ class Engine
                            'links, forms, cookies, UI inputs, UI forms, JSONs and XMLs.'
             print_line
 
-            options.audit.elements :links, :forms, :cookies, :ui_inputs,
+            options.audit.elements :links, :forms, :cookies, :headers, :ui_inputs,
                                    :ui_forms, :jsons, :xmls
         end
     end

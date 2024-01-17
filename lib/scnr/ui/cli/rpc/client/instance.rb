@@ -275,7 +275,7 @@ class Instance
                            'links, forms, cookies, UI forms, UI inputs, JSONs and XMLs.'
             print_line
 
-            @options.audit.elements :links, :forms, :cookies, :jsons, :xmls,
+            @options.audit.elements :links, :forms, :cookies, :headers, :jsons, :xmls,
                                     :ui_forms, :ui_inputs
         end
 
