@@ -272,7 +272,7 @@ class Instance
             !@options.audit.ui_inputs?
 
             print_info 'No element audit options were specified, will audit ' <<
-                           'links, forms, cookies, UI forms, UI inputs, JSONs and XMLs.'
+                           'links, forms, cookies, headers, UI forms, UI inputs, JSONs and XMLs.'
             print_line
 
             @options.audit.elements :links, :forms, :cookies, :headers, :jsons, :xmls,

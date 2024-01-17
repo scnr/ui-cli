@@ -451,7 +451,7 @@ class Engine
             !options.audit.ui_forms?
 
             print_info 'No element audit options were specified, will audit ' <<
-                           'links, forms, cookies, UI inputs, UI forms, JSONs and XMLs.'
+                           'links, forms, cookies, headers, UI inputs, UI forms, JSONs and XMLs.'
             print_line
 
             options.audit.elements :links, :forms, :cookies, :headers, :ui_inputs,
