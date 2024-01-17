@@ -262,6 +262,7 @@ class Instance
     def prepare_rpc_options
         # No checks have been specified, set the mods to '*' (all).
         if @options.checks.empty?
+            print_info 'No checks were specified, loading all.'
             @options.checks = ['*']
         end
 
