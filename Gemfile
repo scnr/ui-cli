@@ -30,6 +30,10 @@ if File.exist? '../application'
     gem 'scnr-application', path: '../application'
 end
 
+if File.exist? '../scnr'
+    gem 'scnr', path: '../scnr'
+end
+
 if File.exist? '../engine'
     gem 'scnr-engine', path: '../engine'
 end
