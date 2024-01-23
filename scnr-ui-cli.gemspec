@@ -31,5 +31,5 @@ Gem::Specification.new do |s|
     # Outputting data in table format (scnr_engine_rpcd_monitor).
     s.add_dependency 'terminal-table', '1.4.5'
 
-    s.add_dependency 'scnr-application', '0.1'
+    s.add_dependency 'scnr-application', ' ~> 0.1'
 end
