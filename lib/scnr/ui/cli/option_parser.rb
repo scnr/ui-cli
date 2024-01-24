@@ -51,7 +51,7 @@ class OptionParser
     end
 
     def banner
-        "Usage: #{$0} [options]"
+        "Usage: bin/#{File.basename( $0 )} [options]"
     end
 
     def parser
