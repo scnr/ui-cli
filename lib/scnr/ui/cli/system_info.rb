@@ -15,6 +15,15 @@ module UI::CLI
 class SystemInfo
     include Output
 
+    def initialize
+        begin
+            SCNR::License.guard! :dev, :trial, :basic, :pro, :enterprise
+        rescue SCNR::License::Error => e
+            puts "[ERROR] #{e}"
+            exit 1
+        end
+    end
+
     def run
         print_line UI::CLI::BANNER
         print_line

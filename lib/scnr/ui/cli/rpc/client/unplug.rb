@@ -18,6 +18,13 @@ class Unplug
     include Utilities
 
     def initialize
+        begin
+            SCNR::License.guard! :dev, :trial, :enterprise
+        rescue SCNR::License::Error => e
+            puts "[ERROR] #{e}"
+            exit 1
+        end
+
         parser = Unplug::OptionParser.new
         parser.ssl
         parser.parse

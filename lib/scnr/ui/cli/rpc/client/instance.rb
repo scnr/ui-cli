@@ -39,6 +39,13 @@ class Instance
     # @param    [RPC::Client::Instance]     instance
     #   Instance to control.
     def initialize( instance, cli_options )
+        begin
+            SCNR::License.guard! :dev, :trial, :enterprise
+        rescue SCNR::License::Error => e
+            puts "[ERROR] #{e}"
+            exit 1
+        end
+
         @options     = SCNR::Engine::Options.instance
         @cli_options = cli_options
         @instance    = instance

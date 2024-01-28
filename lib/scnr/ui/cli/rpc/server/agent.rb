@@ -20,6 +20,13 @@ module Server
 class Agent
 
     def initialize
+        begin
+            SCNR::License.guard! :dev, :trial, :enterprise
+        rescue SCNR::License::Error => e
+            puts "[ERROR] #{e}"
+            exit 1
+        end
+
         OptionParser.new.parse
 
         SCNR::Application.spawn(
