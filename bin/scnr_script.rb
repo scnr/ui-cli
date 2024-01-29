@@ -9,12 +9,20 @@
 
 require 'scnr/ui/cli'
 
+begin
+    SCNR::License.guard! :dev, :trial, :basic, :pro, :enterprise
+rescue SCNR::License::Error => e
+    puts "[ERROR] #{e}"
+    exit 1
+end
+
 include SCNR::Engine
 include UI::Output
 
 if ARGV.empty?
     puts <<EOHELP
-#{BANNER}
+            Codename SCNR v#{SCNR::VERSION}
+   by Ecsypno Single Member P.C. <#{WEBSITE}>
 
 Usage: #{__FILE__} SCRIPT
 

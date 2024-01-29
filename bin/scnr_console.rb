@@ -11,10 +11,20 @@ require 'scnr/ui/cli'
 require 'irb'
 require 'irb/completion'
 
+begin
+    SCNR::License.guard! :dev, :trial, :basic, :pro, :enterprise
+rescue SCNR::License::Error => e
+    puts "[ERROR] #{e}"
+    exit 1
+end
+
 include SCNR::Engine
 include UI::Output
 
-puts BANNER
+puts <<EOHELP
+            Codename SCNR v#{SCNR::VERSION}
+   by Ecsypno Single Member P.C. <#{WEBSITE}>
+EOHELP
 puts
 puts "(Run 'mute/unmute' to change system output.)"
 
