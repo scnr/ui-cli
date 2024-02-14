@@ -51,7 +51,7 @@ class OptionParser
     end
 
     def banner
-        "Usage: bin/#{File.basename( $0 )} [options]"
+        "Usage: bin/#{File.basename( $0 ).split( '.' , 2 ).first} [options]"
     end
 
     def parser
