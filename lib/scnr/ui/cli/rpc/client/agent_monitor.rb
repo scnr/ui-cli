@@ -24,12 +24,7 @@ class AgentMonitor
     include Utilities
 
     def initialize
-        begin
-            SCNR::License.guard! :dev, :trial, :enterprise
-        rescue SCNR::License::Error => e
-            puts "[ERROR] #{e}"
-            exit 1
-        end
+        SCNR::License.guard! :dev, :trial, :enterprise
 
         parser = AgentMonitor::OptionParser.new
         parser.ssl

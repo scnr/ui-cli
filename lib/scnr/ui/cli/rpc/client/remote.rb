@@ -24,12 +24,7 @@ class Remote
     include Output
 
     def initialize
-        begin
-            SCNR::License.guard! :dev, :trial, :enterprise
-        rescue SCNR::License::Error => e
-            puts "[ERROR] #{e}"
-            exit 1
-        end
+        SCNR::License.guard! :dev, :trial, :enterprise
 
         parser = Remote::OptionParser.new
         parser.authorized_by
