@@ -21,12 +21,7 @@ class Reproduce
     COLUMNS = 120
 
     def initialize
-        begin
-            SCNR::License.guard! :dev, :trial, :basic, :pro, :enterprise
-        rescue SCNR::License::Error => e
-            puts "[ERROR] #{e}"
-            exit 1
-        end
+        SCNR::License.guard! :dev, :trial, :basic, :pro, :sdlc, :enterprise
 
         run
     end

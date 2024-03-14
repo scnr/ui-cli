@@ -19,12 +19,7 @@ module Rest
 class Server
 
     def initialize
-        begin
-            SCNR::License.guard! :dev, :trial, :enterprise
-        rescue SCNR::License::Error => e
-            puts "[ERROR] #{e}"
-            exit 1
-        end
+        SCNR::License.guard! :dev, :trial, :sdlc, :enterprise
 
         parser = OptionParser.new
         parser.parse
