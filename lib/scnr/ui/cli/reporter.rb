@@ -20,6 +20,8 @@ class Reporter
     include Utilities
 
     def initialize
+        SCNR::License.guard! :dev, :trial, :basic, :pro, :sdlc, :enterprise
+
         @reporters = SCNR::Engine::Reporter::Manager.new
         run
     end

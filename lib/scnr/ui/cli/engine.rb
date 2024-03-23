@@ -25,7 +25,7 @@ class Engine
 
     # Initializes the command line interface and the {Framework}.
     def initialize
-        SCNR::License.guard! :dev, :trial, :basic, :pro, :sdlc, :enterprise
+        SCNR::License.guard! :dev, :trial, :community, :basic, :pro, :sdlc, :enterprise
 
         @application = SCNR::Application.unsafe
         @scan        = @application.api.scan
