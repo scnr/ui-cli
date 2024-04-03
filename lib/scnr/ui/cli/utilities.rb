@@ -8,7 +8,6 @@
 
 module SCNR
 
-require 'scnr/ui/cli/output'
 require 'scnr/ui/cli/mixins/terminal'
 
 module UI::CLI
