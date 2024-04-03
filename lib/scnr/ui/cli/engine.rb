@@ -27,13 +27,11 @@ class Engine
     def initialize
         SCNR::License.guard! :dev, :trial, :community, :basic, :pro, :sdlc, :enterprise
 
-        @scan = SCNR::Application.api.scan
-
-        parse_options
         ensure_available_slots
+        parse_options
 
-        # Reset the engine's HTTP interface so that options will take effect.
-        SCNR::Engine::HTTP::Client.reset
+        @scan = SCNR::Application.api.scan
+        @scan.options.set options.to_h
 
         @show_command_screen = nil
         @suspend_handler     = nil
@@ -182,9 +180,9 @@ class Engine
         refresh_line nil, unmute
         refresh_info( "Audited #{statistics[:audited_pages]} page snapshots.", unmute )
 
-        if SCNR::Engine::Options.scope.page_limit
+        if options.scope.page_limit
             refresh_info( 'Audit limited to a max of ' <<
-                "#{SCNR::Engine::Options.scope.page_limit} pages.", unmute )
+                "#{options.scope.page_limit} pages.", unmute )
         end
 
         refresh_line nil, unmute
