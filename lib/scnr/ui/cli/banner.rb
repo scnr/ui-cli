@@ -17,7 +17,7 @@ module CLI
 
     BANNER =<<EOBANNER
             Codename SCNR v#{SCNR::VERSION}
-    by Ecsypno Single Member P.C. (Copyright 2023)
+    by Ecsypno Single Member P.C. (Copyright 2024)
              #{WEBSITE}
 EOBANNER
 
