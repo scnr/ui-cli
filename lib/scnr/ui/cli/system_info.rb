@@ -15,12 +15,6 @@ module UI::CLI
 class SystemInfo
     include Output
 
-    def initialize
-        if defined? SCNR::License
-            SCNR::License.guard! :dev, :trial, :community, :basic, :pro, :enterprise
-        end
-    end
-
     def run
         print_line UI::CLI::BANNER
         print_line
