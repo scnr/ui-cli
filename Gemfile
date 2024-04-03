@@ -1,7 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'bootsnap', require: false
-
 gem 'rake', '~> 10.0'
 gem 'pry'
 gem 'debug'
