@@ -348,6 +348,11 @@ class OptionParser < UI::CLI::OptionParser
             'Specify custom headers to be included in the HTTP requests.',
             'Can be used multiple times.'
         ) do |header|
+            if SCNR.edition == :community
+                print_error "--http-request-header option not supported by #{SCNR.edition} edition."
+                exit 1
+            end
+
             header, val = header.split( '=', 2 )
             options.http.request_headers[header] = val
         end
@@ -362,6 +367,11 @@ class OptionParser < UI::CLI::OptionParser
         on( '--http-cookie-jar COOKIE_JAR_FILE',
                'Netscape-styled HTTP cookiejar file.'
         ) do |file|
+            if SCNR.edition == :community
+                print_error "--http-cookie-jar option not supported by #{SCNR.edition} edition."
+                exit 1
+            end
+
             options.http.cookie_jar_filepath = file
         end
 
@@ -369,16 +379,31 @@ class OptionParser < UI::CLI::OptionParser
                "Cookie representation as a 'Set-Cookie' HTTP response header.",
                'Example: my_cookie=my_value; Path=/, other_cookie=other_value; Path=/test'
         ) do |cookie|
+            if SCNR.edition == :community
+                print_error "--http-cookie-string option not supported by #{SCNR.edition} edition."
+                exit 1
+            end
+
             options.http.cookie_string = cookie
         end
 
         on( '--http-authentication-username USERNAME',
                'Username for HTTP authentication.' ) do |username|
+            if SCNR.edition == :community
+                print_error "--http-authentication-username option not supported by #{SCNR.edition} edition."
+                exit 1
+            end
+
             options.http.authentication_username = username
         end
 
         on( '--http-authentication-password PASSWORD',
                'Password for HTTP authentication.' ) do |password|
+            if SCNR.edition == :community
+                print_error "--http-authentication-password option not supported by #{SCNR.edition} edition."
+                exit 1
+            end
+
             options.http.authentication_password = password
         end
 
