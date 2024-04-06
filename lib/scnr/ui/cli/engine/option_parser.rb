@@ -748,6 +748,11 @@ class OptionParser < UI::CLI::OptionParser
             'Useful for running arbitrary code prior to the scan or loading a DSL API script.',
             'Can be used multiple times.'
         ) do |script|
+            if SCNR.edition == :community
+                print_error "--script option not supported by #{SCNR.edition} edition."
+                exit 1
+            end
+
             if !File.exist? script
                 print_bad "Script '#{script}' does not exist."
                 exit 1
