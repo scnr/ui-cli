@@ -27,8 +27,8 @@ class Engine
     def initialize
         SCNR::License.guard! :dev, :trial, :community, :basic, :pro, :sdlc, :enterprise
 
-        ensure_available_slots
         parse_options
+        ensure_available_slots
 
         @scan = SCNR::Application.api.scan
         @scan.options.set options.to_h
