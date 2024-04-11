@@ -33,6 +33,11 @@ class Reporter
         parser.reporter
         parser.parse
 
+        if !File.exist?( SCNR::Engine::Options.report.path )
+            print_error "Report file does not exist: #{SCNR::Engine::Options.report.path}"
+            exit 1
+        end
+
         reporters = parser.reporters
         reporters = { 'stdout' => {} } if reporters.empty?
 
