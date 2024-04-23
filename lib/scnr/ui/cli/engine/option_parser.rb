@@ -264,7 +264,8 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--audit-mode [LEVEL]', String,
             options.audit.class::MODES.join( ', ' ),
-            'Determines the thoroughness of the audit -- mostly affects check payloads.',
+            'Determines the thoroughness of the audit.',
+            '"super" will disable optimization heuristics and inject all payloads into all inputs.',
             "(Default: #{options.audit.mode})"
         ) do |level|
             options.audit.mode = level
