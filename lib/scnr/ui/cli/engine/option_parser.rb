@@ -121,15 +121,23 @@ class OptionParser < UI::CLI::OptionParser
 
         on( '--scope-auto-redundant [LIMIT]', Integer,
                'Only follow URLs with identical query parameter names LIMIT amount of times.',
-               '(Default: 10)'
+               "(Default: #{options.scope.auto_redundant_paths || 'inf'})"
         ) do |counter|
-            options.scope.auto_redundant_paths = counter || 10
+            options.scope.auto_redundant_paths = counter
+        end
+
+        on( '--scope-depth-limit LIMIT', Integer,
+            'Depth limit.',
+            'How deep the scanner should go into the site structure.',
+            "(Default: #{options.scope.depth_limit || 'inf'})",
+            ) do |depth|
+            options.scope.depth_limit = depth
         end
 
         on( '--scope-directory-depth-limit LIMIT', Integer,
                'Directory depth limit.',
-               'How deep SCNR::Engine should go into the site structure.',
-                '(Default: inf)',
+               'How deep the scanner should go into the site\'s directory structure.',
+                "(Default: #{options.scope.directory_depth_limit || 'inf'})",
         ) do |depth|
             options.scope.directory_depth_limit = depth
         end
