@@ -11,12 +11,7 @@ require 'scnr/ui/cli'
 require 'irb'
 require 'irb/completion'
 
-begin
-    SCNR::License.guard! :dev, :trial, :basic, :pro, :enterprise
-rescue SCNR::License::Error => e
-    puts "[ERROR] #{e}"
-    exit 1
-end
+SCNR::License.guard! :dev, :trial, :basic, :pro, :enterprise
 
 include SCNR::Engine
 include UI::Output
