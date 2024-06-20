@@ -131,6 +131,8 @@ class Engine
             if @suspend_handler
                 @suspend_handler.join
             else
+                @statistics = @scan.statistics
+
                 generate_reports
                 generate_session_snapshot
             end
@@ -165,7 +167,7 @@ class Engine
     end
 
     def print_statistics( unmute = false )
-        statistics = @scan.statistics
+        statistics = @statistics
 
         http            = statistics[:http]
         browser_cluster = statistics[:browser_pool]
