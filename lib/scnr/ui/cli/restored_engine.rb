@@ -36,11 +36,11 @@ class RestoredEngine < Engine
         @timeout_suspend = parser.timeout_suspend?
 
         if parser.print_metadata?
-            print_metadata Engine::Snapshot.read_metadata( SCNR::Engine::Options.snapshot.path )
+            print_metadata SCNR::Engine::Snapshot.read_metadata( SCNR::Engine::Options.snapshot.path )
             exit
         end
 
-        framework.restore SCNR::Engine::Options.snapshot.path
+        SCNR::Engine::Framework.unsafe.restore! SCNR::Engine::Options.snapshot.path
     end
 
     def print_metadata( metadata )
@@ -55,7 +55,7 @@ class RestoredEngine < Engine
         print_line
 
         print_info 'Framework'
-        framework = data[:engine]
+        framework = data[:framework]
         print_info "  Sitemap size:    #{framework[:sitemap]}"
         print_info "  Page scheduler size: #{framework[:page_queue]}"
         print_info "  URL scheduler size:  #{framework[:url_queue]}"
@@ -92,7 +92,7 @@ class RestoredEngine < Engine
 
         print_line
         print_info 'Framework'
-        framework = state[:engine]
+        framework = state[:framework]
         print_info "  Audited pages:  #{framework[:audited_page_count]}"
         print_info "  Browser states: #{framework[:browser_states]}"
 

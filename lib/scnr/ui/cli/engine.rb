@@ -20,9 +20,6 @@ class Engine
     include Output
     include Utilities
 
-    # @return [Engine]
-    attr_reader :framework
-
     # Initializes the command line interface and the {Framework}.
     def initialize
         SCNR::License.guard! :dev, :trial, :community, :basic, :pro, :sdlc, :enterprise
@@ -135,6 +132,7 @@ class Engine
                 @suspend_handler.join
             else
                 generate_reports
+                generate_session_snapshot
             end
 
             if has_error_log?
@@ -406,6 +404,16 @@ class Engine
 
         print_line
         print_info "Report saved at: #{filepath} [#{filesize}MB]"
+    end
+
+    def generate_session_snapshot
+        SCNR::Engine::Data.clear
+        SCNR::Engine::State.browser_pool.clear
+        SCNR::Engine::State.framework.clear
+
+        snapshot_path = SCNR::Engine::Framework.unsafe.snapshot_path
+        SCNR::Engine::Snapshot.dump snapshot_path
+        print_info "Session saved at: #{snapshot_path}"
     end
 
     # It parses and processes CLI options.
