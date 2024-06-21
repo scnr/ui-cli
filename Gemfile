@@ -20,6 +20,10 @@ group :prof do
     gem 'memory_profiler'
 end
 
+if File.exist? '../../qadron/cuboid'
+    gem 'cuboid', path: '../../qadron/cuboid'
+end
+
 if File.exist? '../introspector'
     gem 'scnr-introspector', path: '../introspector'
 end
