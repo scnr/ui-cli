@@ -167,7 +167,7 @@ class Engine
     end
 
     def print_statistics( unmute = false )
-        statistics = @statistics
+        statistics = @statistics || @scan.statistics
 
         http            = statistics[:http]
         browser_cluster = statistics[:browser_pool]
