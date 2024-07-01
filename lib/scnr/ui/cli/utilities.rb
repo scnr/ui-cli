@@ -201,7 +201,7 @@ module Utilities
     # @param    [String]    profile
     def load_profile( profile )
         exception_jail do
-            Engine::Options.load( profile )
+            SCNR::Engine::Options.load( profile )
         end
     end
 
@@ -209,7 +209,7 @@ module Utilities
     #
     # @param    [String]    filename
     def save_profile( filename )
-        if (filename = Engine::Options.save( filename ))
+        if (filename = SCNR::Engine::Options.save( filename ))
             print_status "Saved profile in '#{filename}'."
             print_line
         else
