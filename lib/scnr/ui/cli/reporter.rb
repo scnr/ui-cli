@@ -33,8 +33,8 @@ class Reporter
         parser.reporter
         parser.parse
 
-        if !File.exist?( SCNR::Engine::Options.report.path )
-            print_error "Report file does not exist: #{SCNR::Engine::Options.report.path}"
+        if !File.exist?( parser.report )
+            print_error "Report file does not exist: #{parser.report}"
             exit 1
         end
 
@@ -45,9 +45,9 @@ class Reporter
         begin
 
             report = begin
-                Engine::Report.load( SCNR::Engine::Options.report.path )
+                Engine::Report.load( parser.report )
             rescue
-                Cuboid::Report.load( SCNR::Engine::Options.report.path ).data
+                Cuboid::Report.load( parser.report ).data
             end
 
             reporters.each do |name, options|

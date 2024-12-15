@@ -18,6 +18,8 @@ class OptionParser < UI::CLI::OptionParser
 
     attr_reader :framework
 
+    attr_reader :report
+
     # @return   [Hash{<String, Symbol> => Hash{String => String}}]
     #   Reports to load, by name, as keys and their options as values.
     #
@@ -57,11 +59,11 @@ class OptionParser < UI::CLI::OptionParser
     end
 
     def after_parse
-        options.report.path = ARGV.shift
+        @report = ARGV.shift
     end
 
     def validate
-        if !options.report.path
+        if !@report
             print_error 'No report file provided.'
             exit 1
         end
